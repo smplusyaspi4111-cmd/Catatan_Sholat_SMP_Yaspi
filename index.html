@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Digital Terpadu | SMP Yaspi Medan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #0b6623; /* Hijau Islami Modern */
+            --secondary-color: #d4af37; /* Emas */
+            --dark-color: #1b262c;
+            --light-color: #f4f6f9;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        /* Header Style */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #053b11 100%);
+            color: white;
+            padding: 50px 20px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px solid var(--secondary-color);
+            margin: 0 auto 15px auto;
+        }
+
+        /* Menu Card Style */
+        .menu-card {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(11, 102, 35, 0.15);
+            border-bottom: 4px solid var(--secondary-color);
+        }
+
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* Badge Status */
+        .badge-ready {
+            background-color: rgba(11, 102, 35, 0.1);
+            color: var(--primary-color);
+        }
+        .badge-dev {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: #b5901b;
+        }
+
+        .btn-akses {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-akses:hover {
+            background-color: #053b11;
+            color: var(--secondary-color);
+        }
+
+        footer {
+            margin-top: 60px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-section text-center">
+        <div class="container">
+            <div class="logo-placeholder">
+                <i class="fa-solid fa-mosque text-warning"></i>
+            </div>
+            <h1 class="fw-bold mb-1">SMP YASPI MEDAN</h1>
+            <p class="text-white-50 fs-5 mb-3">Arah Baru: Unggul dalam Tahfiz, Terdepan dalam Teknologi</p>
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+                <i class="fa-solid fa-circle-check me-1"></i> PORTAL DIGITAL TERPADU (JANUARI 2025)
+            </span>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark">Layanan & Aktivitas Digital</h2>
+            <p class="text-muted">Silakan pilih ekosistem digital yang ingin Anda akses</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card menu-card p-4">
+                    <div class="icon-box bg-success text-success bg-opacity-10 text-primary">
+                        <i class="fa-solid fa-heart-pulse text-success"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Catatan Sholat Siswa</h5>
+                    <p class="text-muted small flex-grow-1">Aplikasi pemantauan ibadah sholat harian mandiri untuk seluruh siswa SMP Yaspi.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge badge-ready px-2.5 py-1.5 rounded">Siap Bangun</span>
+                        <a href="sholat.html" class="btn btn-sm btn-akses px-3">Buka <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card menu-card p-4">
+                    <div class="icon-box bg-warning text-warning bg-opacity-10">
+                        <i class="fa-solid fa-book-quran"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Jurnal Tahfiz</h5>
+                    <p class="text-muted small flex-grow-1">Sistem pencatatan hafalan ayat dan setoran hafalan Al-Qur'an secara real-time.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge badge-dev px-2.5 py-1.5 rounded">Rencana</span>
+                        <button class="btn btn-sm btn-secondary disabled opacity-50 px-3">Kunci</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card menu-card p-4">
+                    <div class="icon-box bg-info text-info bg-opacity-10">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Laboratorium Arduino</h5>
+                    <p class="text-muted small flex-grow-1">Wadah siswa untuk mengunggah laporan penelitian sederhana berbasis teknologi robotika DIY.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge badge-dev px-2.5 py-1.5 rounded">Rencana</span>
+                        <button class="btn btn-sm btn-secondary disabled opacity-50 px-3">Kunci</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card menu-card p-4">
+                    <div class="icon-box bg-danger text-danger bg-opacity-10">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Sistem SPP & Absensi</h5>
+                    <p class="text-muted small flex-grow-1">Portal administrasi guru untuk absensi harian dan pembayaran SPP digital yang sudah berjalan.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge badge-ready px-2.5 py-1.5 rounded">Integrasi</span>
+                        <a href="#" class="btn btn-sm btn-akses px-3">Akses <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="p-4 bg-white rounded-3 shadow-sm border-start border-4 border-success text-center text-md-start">
+                    <h5 class="fw-bold"><i class="fa-solid fa-lightbulb text-warning me-2"></i> Pesan Kepemimpinan:</h5>
+                    <p class="mb-0 text-muted italic">"Masuk siang bukan halangan untuk menjadi pemenang. Lewat integrasi iman, takwa, dan teknologi, kita buktikan SMP Yaspi Medan mampu mencetak generasi unggul yang melek masa depan!" — <strong>Pak Ifham Fuady Fasa, S.Pd (VM)</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center pb-4">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 SMP Yaspi Medan. Didesain secara digital bersama Tim VM.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
