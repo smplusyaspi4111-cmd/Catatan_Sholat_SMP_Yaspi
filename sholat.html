@@ -230,11 +230,41 @@
         }
 
         function cekPasswordKonfirmasi() {
-            const passInput = document.getElementById('passSiswa').value;
+            const passInput = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
             
             if (!profilSiswa) return;
 
+            // JIKA SPREADSHEET MASIH KOSONG -> MODE DAFTAR PASSWORD BARU
+            if (profilSiswa.password === "" || profilSiswa.password === undefined || profilSiswa.password === null) {
+                if (passInput.length >= 4) { // Minimal 4 karakter agar aman
+                    statusBox.className = "alert alert-warning mb-0 p-2 d-flex align-items-center fw-bold small";
+                    statusBox.innerHTML = `<i class='fa-solid fa-user-plus fa-spin me-2'></i> Membuat Password Baru... Tunggu sebentar.`;
+                    
+                    // Kirim perintah ke server untuk mengunci password baru ini di spreadsheet
+                    fetch(URL_WEB_APP, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "daftar_password", nim: profilSiswa.nim || document.getElementById('nimSiswa').value, password_baru: passInput })
+                    })
+                    .then(r => r.json()).then(res => {
+                        if(res.status === "sukses") {
+                            profilSiswa.password = passInput; // Update data lokal browser
+                            statusBox.className = "alert alert-success mb-0 p-2 d-flex align-items-center fw-bold small";
+                            statusBox.innerHTML = `<i class='fa-solid fa-circle-check me-2'></i> Password Berhasil Dibuat! Terbuka: ${profilSiswa.nama}`;
+                            bukaSemuaTombol();
+                        } else {
+                            statusBox.innerHTML = "Gagal mendaftarkan password baru.";
+                        }
+                    });
+                } else {
+                    statusBox.className = "alert alert-info mb-0 p-2 d-flex align-items-center fw-bold small";
+                    statusBox.innerHTML = `<i class='fa-solid fa-key me-2'></i> Akun Baru! Ketik minimal 4 karakter untuk Password kamu...`;
+                    kunciSemuaTombol();
+                }
+                return;
+            }
+
+            // JIKA SPREADSHEET SUDAH ADA ISI -> MODE LOGIN BIASA
             if (String(passInput) === String(profilSiswa.password)) {
                 statusBox.className = "alert alert-success mb-0 p-2 d-flex align-items-center fw-bold small";
                 statusBox.innerHTML = `<i class='fa-solid fa-circle-check me-2'></i> Akses Terbuka: ${profilSiswa.nama} (${profilSiswa.kelas}) [${profilSiswa.gender}]`;
@@ -245,7 +275,6 @@
                 kunciSemuaTombol();
             }
         }
-
         function bukaSemuaTombol() {
             ['S','Z','A','M','I'].forEach(kode => {
                 document.getElementById('btn-'+kode).disabled = false;
