@@ -85,7 +85,6 @@
             border: 2px solid #e67e22;
         }
         
-        /* WARNA TOMBOL SESUAI LAPORAN SHEET */
         .btn-opsi-sholat {
             flex: 1;
             min-width: 140px;
@@ -110,11 +109,11 @@
             opacity: 0.6;
         }
         
-        .btn-biru { background-color: #2980b9; }      /* Berjamaah (Laki-laki) */
-        .btn-abu { background-color: #7f8c8d; }       /* Udzur Syar'i (Perempuan) */
-        .btn-hijau { background-color: #27ae60; }     /* Awal Waktu */
-        .btn-kuning { background-color: #f1c40f; color: #2c3e50 !important; }    /* Pertengahan Waktu */
-        .btn-merah { background-color: #e74c3c; }      /* Akhir Waktu */
+        .btn-biru { background-color: #2980b9; }      
+        .btn-abu { background-color: #7f8c8d; }       
+        .btn-hijau { background-color: #27ae60; }     
+        .btn-kuning { background-color: #f1c40f; color: #2c3e50 !important; }    
+        .btn-merah { background-color: #e74c3c; }      
         
         .btn-opsi-sholat span {
             font-size: 0.7rem;
@@ -170,12 +169,12 @@
         </div>
 
         <div id="wadahAbsenSholat" style="display: none;">
-            <!-- Baris Sholat -->
+            <!-- Baris Sholat digenerate otomatis -->
         </div>
     </div>
 
     <script>
-        // 1. Deklarasi Konfigurasi Awal & Fungsi Pembantu Waktu (Paling Atas agar Aman)
+        // MASUKKAN URL WEB APP GOOGLE SCRIPT KAMU YANG BARU DI SINI
         const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbxIVu-I8yBnof6ECvOKBUQfAkJlD-hTCArPSIE4B00MiQYGkYwJvDKvD-f_zRful3ZI/exec"; 
         
         let jadwalMedan = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52", "S_Besok": "05:02" };
@@ -191,7 +190,6 @@
             return `${String(Math.floor(mAsli / 60)).padStart(2,'0')}:${String(mAsli % 60).padStart(2,'0')}`; 
         }
 
-        // 2. Menjalankan Jam Digital & Tanggal
         document.getElementById('tglHariIni').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         
         setInterval(() => {
@@ -199,7 +197,7 @@
             document.getElementById('jamDigital').innerText = ClinicalTime(sekarang);
         }, 1000);
 
-        // 3. Ambil Jadwal Sholat dari Server
+        // Ambil Jadwal dari Server
         fetch(URL_WEB_APP, { method: "POST", body: JSON.stringify({ action: "ambil_jadwal" }) })
         .then(r => r.json()).then(res => {
             if(res.status === "sukses") {
@@ -211,7 +209,6 @@
             }
         }).catch(() => {});
 
-        // 4. Fitur Utama Verifikasi NIM Siswa
         function verifikasiNIM() {
             const nim = document.getElementById('nimSiswa').value;
             const statusBox = document.getElementById('statusProfil');
@@ -257,7 +254,6 @@
             });
         }
 
-        // 5. Fitur Pengaturan Password Baru
         function simpanPasswordBaru() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -278,13 +274,10 @@
                     verifikasiNIM();
                 }
             }).catch(() => {
-                profilSiswa.password = passVal;
-                document.getElementById('btnSimpanPw').disabled = true;
-                cekPasswordKetik();
+                alert("Koneksi gagal saat mendaftarkan password.");
             });
         }
 
-        // 6. Cek Password Realtime saat Diketik Siswa
         function cekPasswordKetik() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -307,24 +300,23 @@
             }
         }
 
-        // 7. Render Tombol Berwarna Sesuai Aturan Poin Laporan Sheet
         function generateBentukTombolSholat(isLakiLaki) {
             const wadah = document.getElementById('wadahAbsenSholat');
             wadah.innerHTML = "";
 
             const daftarSholat = [
-                { kode: "S", nama: "SHUBUH", ikon: "fa-cloud-sun", durasi: 90 },
-                { kode: "Z", nama: "ZUHUR", ikon: "fa-sun", durasi: 0 },
-                { kode: "A", nama: "ASHAR", ikon: "fa-cloud-sun-brightness", durasi: 0 },
-                { kode: "M", nama: "MAGHRIB", ikon: "fa-cloud-moon", durasi: 0 },
-                { kode: "I", nama: "ISYA", ikon: "fa-moon", durasi: 0 }
+                { kode: "S", nama: "SHUBUH", ikon: "fa-cloud-sun", duration: 90 },
+                { kode: "Z", nama: "ZUHUR", ikon: "fa-sun", duration: 0 },
+                { kode: "A", nama: "ASHAR", ikon: "fa-cloud-sun", duration: 0 },
+                { kode: "M", nama: "MAGHRIB", ikon: "fa-cloud-moon", duration: 0 },
+                { kode: "I", nama: "ISYA", ikon: "fa-moon", duration: 0 }
             ];
 
             daftarSholat.forEach(s => {
                 const hMulai = _toMenit(jadwalMedan[s.kode]);
                 let hAkhir = 0;
 
-                if (s.kode === 'S') hAkhir = hMulai + s.durasi;
+                if (s.kode === 'S') hAkhir = hMulai + s.duration;
                 else if (s.kode === 'Z') hAkhir = _toMenit(jadwalMedan.A);
                 else if (s.kode === 'A') hAkhir = _toMenit(jadwalMedan.M);
                 else if (s.kode === 'M') hAkhir = _toMenit(jadwalMedan.I);
@@ -360,21 +352,17 @@
                             <i class="fa-solid ${s.ikon} me-1"></i> ${s.nama}<br>
                             <span class="kotak-jam-masuk">${jadwalMedan[s.kode]}</span>
                         </div>
-                        
                         ${tombolUtamaHTML}
-
                         <button id="btn-${s.kode}-AWAL" class="btn-opsi-sholat btn-hijau" onclick="prosesKlaim('${s.kode}', 'AWAL', ${isLakiLaki ? 15 : 20}, 'hijau')">
                             AWAL WAKTU
                             <span>${rangeAwal}</span>
                             <span class="text-sub-tombol">${isLakiLaki ? 15 : 20} POINT</span>
                         </button>
-
                         <button id="btn-${s.kode}-TENGAH" class="btn-opsi-sholat btn-kuning" onclick="prosesKlaim('${s.kode}', 'TENGAH', 10, 'kuning')">
                             PERTENGAHAN WAKTU
                             <span>${rangeTengah}</span>
                             <span class="text-sub-tombol">10 POINT</span>
                         </button>
-
                         <button id="btn-${s.kode}-AKHIR" class="btn-opsi-sholat btn-merah" onclick="prosesKlaim('${s.kode}', 'AKHIR', 5, 'merah')">
                             AKHIR WAKTU
                             <span>${rangeAkhir}</span>
@@ -395,7 +383,6 @@
             }
         }
 
-        // 8. Kirim Data Sholat ke Google Sheets Backend
         function prosesKlaim(kodeSholat, jenisKlik, poinNilai, warnaKolom) {
             const baris = document.getElementById(`baris-${kodeSholat}`);
             const semuaTombolDiBaris = baris.querySelectorAll('button');
@@ -426,7 +413,8 @@
                 }
             })
             .catch(() => {
-                alert("Sukses! Data laporan absensi sholat kamu telah berhasil terekam di database sistem.");
+                alert("Error: Gagal terhubung ke server. Periksa jaringan Anda!");
+                semuaTombolDiBaris.forEach(btn => btn.disabled = false);
             });
         }
     </script>
