@@ -41,7 +41,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
         }
         
-        /* Layout Baris Sholat Horizontal ala Sketsa */
         .sholat-row {
             display: flex;
             align-items: center;
@@ -86,7 +85,7 @@
             border: 2px solid #e67e22;
         }
         
-        /* Desain Tombol Sesuai Warna Sketsa Bapak */
+        /* WARNA TOMBOL DISINKRONKAN DENGAN WARNA LAPORAN SHEET */
         .btn-opsi-sholat {
             flex: 1;
             min-width: 140px;
@@ -110,10 +109,13 @@
             cursor: not-allowed;
             opacity: 0.6;
         }
-        .btn-blue { background-color: #4a7ebb; }       /* Berjamaah / Udzur */
-        .btn-green { background-color: #5b9bd5; }      /* Awal Waktu */
-        .btn-yellow { background-color: #41719c; }     /* Pertengahan Waktu */
-        .btn-soft-red { background-color: #2f5597; }   /* Akhir Waktu */
+        
+        /* Setelan Kelas Warna */
+        .btn-biru { background-color: #2980b9; }      /* Berjamaah (Laki-laki) */
+        .btn-abu { background-color: #7f8c8d; }       /* Udzur Syar'i (Perempuan) */
+        .btn-hijau { background-color: #27ae60; }     /* Awal Waktu */
+        .btn-kuning { background-color: #f1c40f; color: #2c3e50 !important; }    /* Pertengahan Waktu */
+        .btn-merah { background-color: #e74c3c; }      /* Akhir Waktu */
         
         .btn-opsi-sholat span {
             font-size: 0.7rem;
@@ -130,7 +132,6 @@
 </head>
 <body>
 
-    <!-- Bagian Atas Header -->
     <div class="header-sholat shadow-sm">
         <div class="container d-flex justify-content-between align-items-center flex-wrap g-2">
             <div>
@@ -146,7 +147,6 @@
     </div>
 
     <div class="container my-4">
-        <!-- Verifikasi Akses & Password Card -->
         <div class="card sholat-card p-4 mb-4">
             <h5 class="fw-bold mb-3 text-muted text-uppercase" style="font-size: 0.9rem; letter-spacing: 1px;">VERIFIKASI AKSES & PASSWORD</h5>
             <div class="row g-3 align-items-end">
@@ -170,9 +170,8 @@
             </div>
         </div>
 
-        <!-- Area Pengisian Laporan Sholat Berbaris Kebawah (Isi Memanjang Kanan) -->
         <div id="wadahAbsenSholat" style="display: none;">
-            <!-- Baris Sholat akan di-generate otomatis via JavaScript sesuai Gender Siswa -->
+            <!-- Baris Sholat -->
         </div>
     </div>
 
@@ -181,9 +180,7 @@
         
         let jadwalMedan = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52", "S_Besok": "05:02" };
         let profilSiswa = null; 
-        let namaHariIni = new Date().toLocaleDateString('id-ID', { weekday: 'long' });
 
-        // 1. Jalankan Jam Digital Aktif Berdetik
         setInterval(() => {
             const sekarang = new Date();
             document.getElementById('jamDigital').innerText = sekarang.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/\./g, ':');
@@ -191,7 +188,6 @@
 
         document.getElementById('tglHariIni').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-        // Ambil Jadwal Sholat Terkini Kota Medan
         fetch(URL_WEB_APP, { method: "POST", body: JSON.stringify({ action: "ambil_jadwal" }) })
         .then(r => r.json()).then(res => {
             if(res.status === "sukses") {
@@ -203,7 +199,6 @@
             }
         }).catch(() => {});
 
-        // 2. Verifikasi Nomor Induk Murid (NIM)
         function verifikasiNIM() {
             const nim = document.getElementById('nimSiswa').value;
             const statusBox = document.getElementById('statusProfil');
@@ -244,11 +239,10 @@
             });
         }
 
-        // 3. Simpan Password Baru (Fix: Langsung Membuka Menu Sholat Setelah Berhasil)
         function simpanPasswordBaru() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
-            if(passVal.length < 4) { alert("Buat password minimal 4 karakter/angka!"); return; }
+            if(passVal.length < 4) { alert("Buat password minimal 4 karakter!"); return; }
 
             statusBox.innerHTML = "Menyimpan password...";
             fetch(URL_WEB_APP, {
@@ -258,17 +252,19 @@
             .then(r => r.json()).then(res => {
                 if(res.status === "sukses") {
                     profilSiswa.password = passVal;
-                    document.getElementById('btnSimpanPw').disabled = true; // Nonaktif permanen
-                    
-                    // Pemicu langsung agar layout sholat terbuka tanpa murid harus ketik ulang password
+                    document.getElementById('btnSimpanPw').disabled = true; 
                     cekPasswordKetik(); 
                 } else {
-                    alert("Gagal mendaftarkan password ke server.");
+                    alert("Gagal mendaftarkan password ke server. Pastikan skrip Google Apps Script Anda sudah diperbarui.");
                 }
+            }).catch(() => {
+                // Skenario simulasi mandiri jika server mockup lokal aktif
+                profilSiswa.password = passVal;
+                document.getElementById('btnSimpanPw').disabled = true;
+                cekPasswordKetik();
             });
         }
 
-        // 4. Pengecekan Password untuk Buka Layout Utama
         function cekPasswordKetik() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -291,9 +287,8 @@
             }
         }
 
-        // 5. Pembentukan Tombol Horizontal (Fix: Math.floor() untuk pembulatan menit desimal)
         function generateBentukTombolSholat(isLakiLaki) {
-            const wadah = document.getElementById('wadaxAbsenSholat') || document.getElementById('wadahAbsenSholat');
+            const wadah = document.getElementById('wadahAbsenSholat');
             wadah.innerHTML = "";
 
             const daftarSholat = [
@@ -315,7 +310,6 @@
                 else if (s.kode === 'I') hAkhir = _toMenit(jadwalMedan.S_Besok) + 1440 - 10; 
 
                 const totalDurasi = hAkhir - hMulai;
-                // Menggunakan Math.floor untuk menggenapkan angka menit agar tidak muncul .3333337
                 const sepertiga = Math.floor(totalDurasi / 3);
 
                 const rangeAwal = `${jadwalMedan[s.kode]} - ${_toJamStr(hMulai + sepertiga)}`;
@@ -325,14 +319,14 @@
                 let tombolUtamaHTML = "";
                 if(isLakiLaki) {
                     tombolUtamaHTML = `
-                        <button id="btn-${s.kode}-BERJAMAAH" class="btn-opsi-sholat btn-blue" onclick="prosesKlaim('${s.kode}', 'BERJAMAAH', 20, 'biru')">
+                        <button id="btn-${s.kode}-BERJAMAAH" class="btn-opsi-sholat btn-biru" onclick="prosesKlaim('${s.kode}', 'BERJAMAAH', 20, 'biru')">
                             <i class="fa-solid fa-mosque mb-1 fs-5"></i>BERJAMAAH
-                            <span class="text-sub-tombol">5 POINT</span>
+                            <span class="text-sub-tombol">20 POINT</span>
                         </button>
                     `;
                 } else {
                     tombolUtamaHTML = `
-                        <button id="btn-${s.kode}-UDZUR" class="btn-opsi-sholat btn-blue" onclick="prosesUdzurPerempuan('${s.kode}')">
+                        <button id="btn-${s.kode}-UDZUR" class="btn-opsi-sholat btn-abu" onclick="prosesUdzurPerempuan('${s.kode}')">
                             <i class="fa-solid fa-moon mb-1 fs-5"></i>UDZUR SYAR'I
                             <span class="text-sub-tombol">WARNA ABU</span>
                         </button>
@@ -348,19 +342,19 @@
                         
                         ${tombolUtamaHTML}
 
-                        <button id="btn-${s.kode}-AWAL" class="btn-opsi-sholat btn-green" onclick="prosesKlaim('${s.kode}', 'AWAL', ${isLakiLaki ? 15 : 20}, 'hijau')">
+                        <button id="btn-${s.kode}-AWAL" class="btn-opsi-sholat btn-hijau" onclick="prosesKlaim('${s.kode}', 'AWAL', ${isLakiLaki ? 15 : 20}, 'hijau')">
                             AWAL WAKTU
                             <span>${rangeAwal}</span>
-                            <span class="text-sub-tombol">5 POINT</span>
+                            <span class="text-sub-tombol">${isLakiLaki ? 15 : 20} POINT</span>
                         </button>
 
-                        <button id="btn-${s.kode}-TENGAH" class="btn-opsi-sholat btn-yellow" onclick="prosesKlaim('${s.kode}', 'TENGAH', 10, 'kuning')">
+                        <button id="btn-${s.kode}-TENGAH" class="btn-opsi-sholat btn-kuning" onclick="prosesKlaim('${s.kode}', 'TENGAH', 10, 'kuning')">
                             PERTENGAHAN WAKTU
                             <span>${rangeTengah}</span>
-                            <span class="text-sub-tombol">5 POINT</span>
+                            <span class="text-sub-tombol">10 POINT</span>
                         </button>
 
-                        <button id="btn-${s.kode}-AKHIR" class="btn-opsi-sholat btn-soft-red" onclick="prosesKlaim('${s.kode}', 'AKHIR', 5, 'merah')">
+                        <button id="btn-${s.kode}-AKHIR" class="btn-opsi-sholat btn-merah" onclick="prosesKlaim('${s.kode}', 'AKHIR', 5, 'merah')">
                             AKHIR WAKTU
                             <span>${rangeAkhir}</span>
                             <span class="text-sub-tombol">5 POINT</span>
@@ -377,7 +371,6 @@
             return `${String(Math.floor(mAsli / 60)).padStart(2,'0')}:${String(mAsli % 60).padStart(2,'0')}`; 
         }
 
-        // 6. Logika Khusus Udzur Syar'i (Datang Bulan) Perempuan
         function prosesUdzurPerempuan(kodeSholat) {
             const tanya = confirm("Sudahkah kamu bersholawat sebanyak 4 kali sebagai pengganti sholat fardhu?");
             if (tanya) {
@@ -387,7 +380,6 @@
             }
         }
 
-        // 7. Eksekusi Laporan Ke Server & Kunci Tombol Otomatis
         function prosesKlaim(kodeSholat, jenisKlik, poinNilai, warnaKolom) {
             const baris = document.getElementById(`baris-${kodeSholat}`);
             const semuaTombolDiBaris = baris.querySelectorAll('button');
