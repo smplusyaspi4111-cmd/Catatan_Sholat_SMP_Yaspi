@@ -59,16 +59,6 @@
             transform: scale(0.95); 
             filter: brightness(0.9); 
         }
-        .getar-notif {
-            animation: shake 0.5s;
-        }
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
-        }
         .petunjuk-tekan { 
             font-size: 0.7rem; 
             display: block; 
@@ -353,10 +343,10 @@
             let hAkhir = 0;
             let mSekarang = _toMenit(jamStr);
 
-            // Perbaikan Mutlak Batas Akhir Subuh: Menggunakan Batas Syuruq Matahari (Adzan + 75 Menit) agar durasinya adil
-            if (kodeSholat === 'S') hAkhir = hMulai + 75;
+            // Pembatasan Durasi Waktu Maksimal Sholat Berdasarkan Jam Syuruq/Batas Waktu Sholat Selanjutnya
+            if (kodeSholat === 'S') hAkhir = hMulai + 90; // Menggunakan 90 menit (1.5 jam) sesuai kondisi nyata syuruq
             else if (kodeSholat === 'Z') hAkhir = _toMenit(jadwalMedan.A);
-            else if (kodeSholat === 'A') hAkhir = _toMedan(jadwalMedan.M);
+            else if (kodeSholat === 'A') hAkhir = _toMenit(jadwalMedan.M);
             else if (kodeSholat === 'M') hAkhir = _toMenit(jadwalMedan.I);
             else if (kodeSholat === 'I') { hAkhir = _toMenit(jadwalMedan.S_Besok) + 1440; if(mSekarang < hMulai) mSekarang += 1440; }
 
@@ -366,16 +356,16 @@
             const sepertiga = durasi / 3;
             let warna = 'merah', poin = 5;
 
-            // Logika Pembagian 1/3 Waktu Berdasarkan Gender Terpadu
+            // Logika Pembagian 1/3 Waktu Hasil Revisi Adil
             if (mSekarang >= hMulai && mSekarang <= (hMulai + sepertiga)) {
                 warna = 'hijau';
                 poin = isLakiLaki ? 15 : 20; 
             } else if (mSekarang > (hMulai + sepertiga) && mSekarang <= (hMulai + (sepertiga * 2))) {
                 warna = 'kuning';
-                poin = isLakiLaki ? 10 : 15; // Perempuan di 1/3 tengah berhak mendapat 15 poin
+                poin = isLakiLaki ? 10 : 15; 
             } else {
                 warna = 'merah';
-                poin = isLakiLaki ? 5 : 10; // Perempuan di 1/3 akhir berhak mendapat 10 poin (tidak boleh jatuh ke 5)
+                poin = 5; // Sesuai request, sepertiga akhir dikunci di 5 poin untuk semua gender demi menjaga keadilan
             }
 
             kirimDataPaket(kodeSholat, jamStr, warna, poin);
@@ -383,10 +373,10 @@
 
         function _toMenit(j) { const [h, m] = j.split(':').map(Number); return h * 60 + m; }
 
+        // Fungsi Simpan Laporan Data
         function kirimDataPaket(sholat, jamVal, warnaVal, poinVal) {
             bootstrap.Modal.getInstance(document.getElementById('modalOpsi'))?.hide();
             
-            // Mengganti alert konfirmasi lama agar lebih elegan dan informatif
             alert(`Sistem sedang mengirim data rekap...\nJenis Ibadah: Sholat ${sholat === 'S' ? 'Subuh' : sholat === 'Z' ? 'Zuhur' : sholat === 'A' ? 'Ashar' : sholat === 'M' ? 'Maghrib' : 'Isya'}\nSkor Perolehan: ${poinVal} Poin`);
 
             fetch(URL_WEB_APP, {
@@ -402,7 +392,6 @@
             })
             .then(r => r.json()).then(res => {
                 if(res.status === "sukses") {
-                    // POPUP BARAKALLAH DIHAPUS TOTAL DI SINI SEPERTI PERINTAH BAPAK!
                     alert("Sukses! Data laporan absensi sholat kamu telah berhasil terekam di database sistem.");
                 } else {
                     alert("Gagal menyimpan: " + res.pesan);
