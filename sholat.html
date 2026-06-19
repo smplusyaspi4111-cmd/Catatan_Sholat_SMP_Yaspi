@@ -232,7 +232,7 @@
                     } else {
                         statusBox.className = "alert alert-info mb-0 p-2 d-flex align-items-center fw-bold small";
                         statusBox.innerHTML = "NIM terverifikasi! Masukkan password kamu.";
-                        btnSimpan.disabled = true; // Kunci tombol simpan karena password sudah ada
+                        btnSimpan.disabled = true; 
                     }
                 } else {
                     profilSiswa = null;
@@ -244,7 +244,7 @@
             });
         }
 
-        // 3. Simpan Password Baru (Hanya untuk pendaftaran pertama)
+        // 3. Simpan Password Baru (Fix: Langsung Membuka Menu Sholat Setelah Berhasil)
         function simpanPasswordBaru() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -258,8 +258,12 @@
             .then(r => r.json()).then(res => {
                 if(res.status === "sukses") {
                     profilSiswa.password = passVal;
-                    document.getElementById('btnSimpanPw').disabled = true; // Langsung Nonaktif Selamanya
+                    document.getElementById('btnSimpanPw').disabled = true; // Nonaktif permanen
+                    
+                    // Pemicu langsung agar layout sholat terbuka tanpa murid harus ketik ulang password
                     cekPasswordKetik(); 
+                } else {
+                    alert("Gagal mendaftarkan password ke server.");
                 }
             });
         }
@@ -287,9 +291,9 @@
             }
         }
 
-        // 5. Pembentukan Tombol Horizontal Sesuai Aturan Waktu Fiqih & File Sketsa Bapak
+        // 5. Pembentukan Tombol Horizontal (Fix: Math.floor() untuk pembulatan menit desimal)
         function generateBentukTombolSholat(isLakiLaki) {
-            const wadah = document.getElementById('wadahAbsenSholat');
+            const wadah = document.getElementById('wadaxAbsenSholat') || document.getElementById('wadahAbsenSholat');
             wadah.innerHTML = "";
 
             const daftarSholat = [
@@ -308,17 +312,16 @@
                 else if (s.kode === 'Z') hAkhir = _toMenit(jadwalMedan.A);
                 else if (s.kode === 'A') hAkhir = _toMenit(jadwalMedan.M);
                 else if (s.kode === 'M') hAkhir = _toMenit(jadwalMedan.I);
-                else if (s.kode === 'I') hAkhir = _toMenit(jadwalMedan.S_Besok) + 1440 - 10; // Batas Akhir Isya: 10 menit sebelum fajar subuh besok
+                else if (s.kode === 'I') hAkhir = _toMenit(jadwalMedan.S_Besok) + 1440 - 10; 
 
                 const totalDurasi = hAkhir - hMulai;
-                const sepertiga = totalDurasi / 3;
+                // Menggunakan Math.floor untuk menggenapkan angka menit agar tidak muncul .3333337
+                const sepertiga = Math.floor(totalDurasi / 3);
 
-                // Hitung Batas Teks Rentang Jam untuk Tombol
                 const rangeAwal = `${jadwalMedan[s.kode]} - ${_toJamStr(hMulai + sepertiga)}`;
                 const rangeTengah = `${_toJamStr(hMulai + sepertiga + 1)} - ${_toJamStr(hMulai + (sepertiga * 2))}`;
                 const rangeAkhir = `${_toJamStr(hMulai + (sepertiga * 2) + 1)} - ${_toJamStr(hAkhir)}`;
 
-                // Tentukan Tombol Kiri Utama (Laki-laki = Berjamaah Masjid, Perempuan = Udzur Bulan)
                 let tombolUtamaHTML = "";
                 if(isLakiLaki) {
                     tombolUtamaHTML = `
@@ -384,9 +387,8 @@
             }
         }
 
-        // 7. Eksekusi Laporan Ke Server & Kunci Tombol Otomatis (Anti-Iseng / Klik Ganda)
+        // 7. Eksekusi Laporan Ke Server & Kunci Tombol Otomatis
         function prosesKlaim(kodeSholat, jenisKlik, poinNilai, warnaKolom) {
-            // Langsung kunci seluruh tombol di baris sholat tersebut demi keamanan data
             const baris = document.getElementById(`baris-${kodeSholat}`);
             const semuaTombolDiBaris = baris.querySelectorAll('button');
             semuaTombolDiBaris.forEach(btn => btn.disabled = true);
@@ -412,7 +414,6 @@
                     alert("Sukses! Data laporan absensi sholat kamu telah berhasil terekam di database sistem.");
                 } else {
                     alert("Gagal menyimpan data: " + res.pesan);
-                    // Jika gagal dari server, buka kembali tombolnya
                     semuaTombolDiBaris.forEach(btn => btn.disabled = false);
                 }
             })
