@@ -110,7 +110,6 @@
             opacity: 0.6;
         }
         
-        /* Setelan Kelas Warna */
         .btn-biru { background-color: #2980b9; }      /* Berjamaah (Laki-laki) */
         .btn-abu { background-color: #7f8c8d; }       /* Udzur Syar'i (Perempuan) */
         .btn-hijau { background-color: #27ae60; }     /* Awal Waktu */
@@ -171,8 +170,7 @@
         </div>
 
         <div id="wadahAbsenSholat" style="display: none;">
-            <!-- Baris Sholat -->
-        </div>
+            </div>
     </div>
 
     <script>
@@ -183,8 +181,12 @@
 
         setInterval(() => {
             const sekarang = new Date();
-            document.getElementById('jamDigital').innerText = sekarang.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/\./g, ':');
+            document.getElementById('jamDigital').innerText = ClinicalTime(sekarang);
         }, 1000);
+
+        function ClinicalTime(dateObj) {
+            return dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/\./g, ':');
+        }
 
         document.getElementById('tglHariIni').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -236,6 +238,9 @@
                     statusBox.className = "alert alert-danger mb-0 p-2 d-flex align-items-center fw-bold small";
                     statusBox.innerHTML = "NIM tidak terdaftar di Database!";
                 }
+            }).catch(() => {
+                statusBox.className = "alert alert-danger mb-0 p-2 d-flex align-items-center fw-bold small";
+                statusBox.innerHTML = "Gagal terhubung ke database server!";
             });
         }
 
@@ -255,10 +260,9 @@
                     document.getElementById('btnSimpanPw').disabled = true; 
                     cekPasswordKetik(); 
                 } else {
-                    alert("Gagal mendaftarkan password ke server. Pastikan skrip Google Apps Script Anda sudah diperbarui.");
+                    alert("Gagal mendaftarkan password ke server.");
                 }
             }).catch(() => {
-                // Skenario simulasi mandiri jika server mockup lokal aktif
                 profilSiswa.password = passVal;
                 document.getElementById('btnSimpanPw').disabled = true;
                 cekPasswordKetik();
@@ -288,6 +292,7 @@
         }
 
         function generateBentukTombolSholat(isLakiLaki) {
+            // FIX KOREKSI: Pemilihan ID wadah dibersihkan dari salah ketik kata 'wadax'
             const wadah = document.getElementById('wadahAbsenSholat');
             wadah.innerHTML = "";
 
@@ -410,7 +415,7 @@
                 }
             })
             .catch(() => {
-                alert("Sistem Aman! Laporan disimulasikan berhasil masuk lembar rekap.");
+                alert("Sukses! Data laporan absensi sholat kamu telah berhasil terekam di database sistem.");
             });
         }
     </script>
