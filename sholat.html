@@ -4,26 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Monitoring Sholat Fiqih | SMP Yaspi</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- CSS Internal Kokoh (Anti Gagal Muat/Broken Layout) -->
     <style>
-        :root { 
-            --primary: #0b6623; 
-            --secondary: #d4af37; 
-            --light: #f4f6f9; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: var(--light); 
-            user-select: none; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f6f9; 
+            color: #333;
+            padding-bottom: 50px;
+        }
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 15px;
         }
         .header-sholat { 
-            background: linear-gradient(135deg, var(--primary) 0%, #053b11 100%); 
+            background: linear-gradient(135deg, #0b6623 0%, #053b11 100%); 
             color: white; 
-            padding: 25px 20px; 
+            padding: 30px 20px; 
             border-bottom-left-radius: 25px; 
             border-bottom-right-radius: 25px; 
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .kembali-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .kembali-link:hover { opacity: 1; }
+        .judul-apps {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .info-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         .jam-aktif {
             background-color: #1a5276;
@@ -31,149 +64,207 @@
             font-weight: 700;
             padding: 8px 15px;
             border-radius: 8px;
-            font-size: 1.1rem;
-            display: inline-block;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
         }
+        .text-warning { color: #d4af37; font-weight: bold; font-size: 0.85rem; margin-top: 5px; }
+        
         .sholat-card { 
             background: white; 
             border-radius: 15px; 
-            border: none; 
+            padding: 25px;
+            margin-bottom: 25px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
         }
+        .card-title {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
         
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        .form-control:disabled { background-color: #e9ecef; }
+        
+        .btn-simpan {
+            background-color: #0b6623;
+            color: white;
+            border: none;
+            padding: 11px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+        }
+        .btn-simpan:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .alert {
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+        }
+        .alert-secondary { background-color: #e2e3e5; color: #383d41; border-left: 5px solid #6c757d; }
+        .alert-warning { background-color: #fff3cd; color: #856404; border-left: 5px solid #ffc107; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; border-left: 5px solid #17a2b8; }
+        .alert-success { background-color: #d4edda; color: #155724; border-left: 5px solid #28a745; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border-left: 5px solid #dc3545; }
+
+        /* Desain Baris Tombol Sholat */
         .sholat-row {
             display: flex;
             align-items: center;
             background: white;
             padding: 15px;
             border-radius: 15px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
             gap: 12px;
-            flex-wrap: nowrap;
             overflow-x: auto;
         }
         .sholat-indeks {
-            background-color: #4a7ebb;
+            background-color: #2980b9;
             color: white;
             padding: 15px;
             border-radius: 10px;
-            min-width: 150px;
+            min-width: 160px;
             text-align: center;
-            font-weight: 600;
-            position: relative;
-        }
-        .sholat-indeks::after {
-            content: '';
-            position: absolute;
-            right: -10px;
-            top: 50%;
-            transform: translateY(-50%);
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 10px solid #4a7ebb;
+            font-weight: bold;
         }
         .kotak-jam-masuk {
             background-color: #f39c12;
             color: white;
             padding: 2px 8px;
             border-radius: 5px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: inline-block;
-            margin-top: 4px;
-            font-weight: bold;
-            border: 2px solid #e67e22;
+            margin-top: 6px;
+            border: 1px solid #e67e22;
         }
         
         .btn-opsi-sholat {
             flex: 1;
-            min-width: 140px;
+            min-width: 150px;
             height: 85px;
             border-radius: 12px;
             border: none;
             color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
+            font-weight: bold;
+            font-size: 0.9rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
-            padding: 5px;
-            text-align: center;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            padding: 8px;
         }
+        .btn-opsi-sholat:active { transform: scale(0.98); }
         .btn-opsi-sholat:disabled {
             background-color: #bdc3c7 !important;
             color: #7f8c8d !important;
             cursor: not-allowed;
-            opacity: 0.6;
+            opacity: 0.5;
         }
         
-        .btn-biru { background-color: #2980b9; }      
-        .btn-abu { background-color: #7f8c8d; }       
-        .btn-hijau { background-color: #27ae60; }     
-        .btn-kuning { background-color: #f1c40f; color: #2c3e50 !important; }    
-        .btn-merah { background-color: #e74c3c; }      
+        .btn-biru { background-color: #1f618d; }      
+        .btn-abu { background-color: #707b7c; }       
+        .btn-hijau { background-color: #1e8449; }     
+        .btn-kuning { background-color: #f1c40f; color: #2c3e50; }    
+        .btn-merah { background-color: #b03a2e; }      
         
         .btn-opsi-sholat span {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: normal;
             opacity: 0.9;
+            margin-top: 3px;
             display: block;
-            margin-top: 2px;
         }
         .text-sub-tombol {
-            font-size: 0.75rem !important;
+            font-size: 0.8rem !important;
             font-weight: bold !important;
+            margin-top: 2px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header-sholat shadow-sm">
-        <div class="container d-flex justify-content-between align-items-center flex-wrap g-2">
+    <div class="header-sholat">
+        <div class="container header-content">
             <div>
-                <a href="index.html" class="text-white text-decoration-none small"><i class="fa-solid fa-arrow-left me-1"></i> Kembali ke Portal</a>
-                <h4 class="fw-bold mt-2 mb-1">📋 CATATAN SHOLAT SMP YASPI MEDAN</h4>
-                <div class="d-flex align-items-center gap-3 mt-2 flex-wrap">
-                    <span class="text-white" id="tglHariIni">Jum'at, 19 Juni 2026</span>
+                <a href="index.html" class="kembali-link">← Kembali ke Portal</a>
+                <div class="judul-apps">📋 CATATAN SHOLAT SMP YASPI MEDAN</div>
+                <div class="info-meta">
+                    <span id="tglHariIni">Memuat Hari...</span>
                     <div class="jam-aktif" id="jamDigital">00:00:00</div>
                 </div>
-                <div class="fw-bold text-warning small mt-1">KOTA MEDAN AUTOMATIC</div>
+                <div class="text-warning">KOTA MEDAN AUTOMATIC SYSTEM</div>
             </div>
         </div>
     </div>
 
-    <div class="container my-4">
-        <div class="card sholat-card p-4 mb-4">
-            <h5 class="fw-bold mb-3 text-muted text-uppercase" style="font-size: 0.9rem; letter-spacing: 1px;">VERIFIKASI AKSES & PASSWORD</h5>
-            <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold text-muted">MASUKKAN NIM (NOMOR INDUK MURID)</label>
+    <div class="container">
+        <!-- Card Verifikasi -->
+        <div class="sholat-card">
+            <div class="card-title">Verifikasi Akses & Password Murid</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">MASUKKAN NIM (NOMOR INDUK MURID)</label>
                     <input type="number" class="form-control" id="nimSiswa" placeholder="Ketik NIM..." oninput="verifikasiNIM()">
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold text-muted">E-PASSWORD KAMU</label>
+                <div class="form-group">
+                    <label class="form-label">E-PASSWORD KAMU</label>
                     <input type="password" class="form-control" id="passSiswa" placeholder="Ketik Password..." disabled oninput="cekPasswordKetik()">
                 </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary w-100 fw-bold text-uppercase" id="btnSimpanPw" disabled onclick="simpanPasswordBaru()">SIMPAN</button>
+                <div class="form-group">
+                    <button class="btn-simpan" id="btnSimpanPw" disabled onclick="simpanPasswordBaru()">SIMPAN</button>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">STATUS VERIFIKASI</label>
-                    <div id="statusProfil" class="alert alert-secondary mb-0 p-2 d-flex align-items-center fw-bold small" style="min-height: 38px;">
+                <div class="form-group">
+                    <label class="form-label">STATUS VERIFIKASI</label>
+                    <div id="statusProfil" class="alert alert-secondary">
                         Silakan masukkan NIM terlebih dahulu.
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Wadah Utama Tombol Absensi Sholat -->
         <div id="wadahAbsenSholat" style="display: none;">
-            </div>
+            <!-- Baris Sholat digenerate otomatis melalui JS di bawah -->
+        </div>
     </div>
 
-    <script>
-        // URL WEB APP TERBARU SUDAH SAYA MASUKKAN KE SINI
+    <!-- SCRIPT UTAMA - DIISOLASI DENGAN AMAN -->
+    <script type="text/javascript">
+        // Link Web App Apps Script milik Pak Ifham yang baru
         const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbyGC6vfUe-b5_XvmZoXauQ0iMwb_g7xa3G2voFheGqHyRyz28clL3WyELFM6WZ81Zgu/exec"; 
         
         let jadwalMedan = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52", "S_Besok": "05:02" };
@@ -189,14 +280,16 @@
             return `${String(Math.floor(mAsli / 60)).padStart(2,'0')}:${String(mAsli % 60).padStart(2,'0')}`; 
         }
 
+        // Set Tanggal Hari Ini
         document.getElementById('tglHariIni').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         
+        // Jalankan Jam Digital
         setInterval(() => {
             const sekarang = new Date();
             document.getElementById('jamDigital').innerText = ClinicalTime(sekarang);
         }, 1000);
 
-        // Ambil Jadwal dari Server
+        // Ambil data jadwal sholat otomatis dari Apps Script saat web dibuka
         fetch(URL_WEB_APP, { method: "POST", body: JSON.stringify({ action: "ambil_jadwal" }) })
         .then(r => r.json()).then(res => {
             if(res.status === "sukses") {
@@ -217,12 +310,12 @@
             if(nim.length < 3) {
                 document.getElementById('wadahAbsenSholat').style.display = "none";
                 passInput.disabled = true; passInput.value = ""; btnSimpan.disabled = true;
-                statusBox.className = "alert alert-secondary mb-0 p-2 d-flex align-items-center fw-bold small";
+                statusBox.className = "alert alert-secondary";
                 statusBox.innerHTML = "Silakan masukkan NIM terlebih dahulu.";
                 return;
             }
             
-            statusBox.innerHTML = "<i class='fa-solid fa-spinner fa-spin me-2'></i> Mencari NIM...";
+            statusBox.innerHTML = "Mencari NIM di database...";
             
             fetch(URL_WEB_APP, { method: "POST", body: JSON.stringify({ action: "cek_nim", nim: nim }) })
             .then(r => r.json()).then(res => {
@@ -232,11 +325,11 @@
                     passInput.focus();
                     
                     if (!profilSiswa.password) {
-                        statusBox.className = "alert alert-warning mb-0 p-2 d-flex align-items-center fw-bold small";
+                        statusBox.className = "alert alert-warning";
                         statusBox.innerHTML = "Akun Baru! Buat password baru lalu klik SIMPAN.";
                         btnSimpan.disabled = false;
                     } else {
-                        statusBox.className = "alert alert-info mb-0 p-2 d-flex align-items-center fw-bold small";
+                        statusBox.className = "alert alert-info";
                         statusBox.innerHTML = "NIM terverifikasi! Masukkan password kamu.";
                         btnSimpan.disabled = true; 
                     }
@@ -244,11 +337,11 @@
                     profilSiswa = null;
                     document.getElementById('wadahAbsenSholat').style.display = "none";
                     passInput.disabled = true; passInput.value = ""; btnSimpan.disabled = true;
-                    statusBox.className = "alert alert-danger mb-0 p-2 d-flex align-items-center fw-bold small";
+                    statusBox.className = "alert alert-danger";
                     statusBox.innerHTML = "NIM tidak terdaftar di Database!";
                 }
             }).catch(() => {
-                statusBox.className = "alert alert-danger mb-0 p-2 d-flex align-items-center fw-bold small";
+                statusBox.className = "alert alert-danger";
                 statusBox.innerHTML = "Gagal terhubung ke database server!";
             });
         }
@@ -287,13 +380,13 @@
                 let genderSiswaClean = String(profilSiswa.gender).toUpperCase().trim();
                 let isLakiLaki = (genderSiswaClean === "L" || genderSiswaClean === "LAKI-LAKI");
                 
-                statusBox.className = "alert alert-success mb-0 p-2 d-flex align-items-center fw-bold small";
-                statusBox.innerHTML = `<i class='fa-solid fa-circle-check me-2'></i> AKSES TERBUKA: ${profilSiswa.nama} [${isLakiLaki ? 'Laki-laki':'Perempuan'}]`;
+                statusBox.className = "alert alert-success";
+                statusBox.innerHTML = `AKSES TERBUKA: ${profilSiswa.nama} [${isLakiLaki ? 'Laki-laki':'Perempuan'}]`;
                 
                 generateBentukTombolSholat(isLakiLaki);
                 document.getElementById('wadahAbsenSholat').style.display = "block";
             } else {
-                statusBox.className = "alert alert-danger mb-0 p-2 d-flex align-items-center fw-bold small";
+                statusBox.className = "alert alert-danger";
                 statusBox.innerHTML = "Password salah! Form terkunci.";
                 document.getElementById('wadahAbsenSholat').style.display = "none";
             }
@@ -304,11 +397,11 @@
             wadah.innerHTML = "";
 
             const daftarSholat = [
-                { kode: "S", nama: "SHUBUH", ikon: "fa-cloud-sun", duration: 90 },
-                { kode: "Z", nama: "ZUHUR", ikon: "fa-sun", duration: 0 },
-                { kode: "A", nama: "ASHAR", ikon: "fa-cloud-sun", duration: 0 },
-                { kode: "M", nama: "MAGHRIB", ikon: "fa-cloud-moon", duration: 0 },
-                { kode: "I", nama: "ISYA", ikon: "fa-moon", duration: 0 }
+                { kode: "S", nama: "SHUBUH", duration: 90 },
+                { kode: "Z", nama: "ZUHUR", duration: 0 },
+                { kode: "A", nama: "ASHAR", duration: 0 },
+                { kode: "M", nama: "MAGHRIB", duration: 0 },
+                { kode: "I", nama: "ISYA", duration: 0 }
             ];
 
             daftarSholat.forEach(s => {
@@ -332,14 +425,14 @@
                 if(isLakiLaki) {
                     tombolUtamaHTML = `
                         <button id="btn-${s.kode}-BERJAMAAH" class="btn-opsi-sholat btn-biru" onclick="prosesKlaim('${s.kode}', 'BERJAMAAH', 20, 'biru')">
-                            <i class="fa-solid fa-mosque mb-1 fs-5"></i>BERJAMAAH
+                            BERJAMAAH
                             <span class="text-sub-tombol">20 POINT</span>
                         </button>
                     `;
                 } else {
                     tombolUtamaHTML = `
                         <button id="btn-${s.kode}-UDZUR" class="btn-opsi-sholat btn-abu" onclick="prosesUdzurPerempuan('${s.kode}')">
-                            <i class="fa-solid fa-moon mb-1 fs-5"></i>UDZUR SYAR'I
+                            UDZUR SYAR'I
                             <span class="text-sub-tombol">WARNA ABU</span>
                         </button>
                     `;
@@ -347,8 +440,8 @@
 
                 const barisHTML = `
                     <div class="sholat-row" id="baris-${s.kode}">
-                        <div class="sholat-indeks text-uppercase">
-                            <i class="fa-solid ${s.ikon} me-1"></i> ${s.nama}<br>
+                        <div class="sholat-indeks">
+                            ${s.nama}<br>
                             <span class="kotak-jam-masuk">${jadwalMedan[s.kode]}</span>
                         </div>
                         ${tombolUtamaHTML}
@@ -358,7 +451,7 @@
                             <span class="text-sub-tombol">${isLakiLaki ? 15 : 20} POINT</span>
                         </button>
                         <button id="btn-${s.kode}-TENGAH" class="btn-opsi-sholat btn-kuning" onclick="prosesKlaim('${s.kode}', 'TENGAH', 10, 'kuning')">
-                            PERTENGAHAN WAKTU
+                            PERTENGAHAN
                             <span>${rangeTengah}</span>
                             <span class="text-sub-tombol">10 POINT</span>
                         </button>
