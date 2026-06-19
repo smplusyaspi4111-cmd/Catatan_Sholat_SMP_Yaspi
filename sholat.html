@@ -85,7 +85,7 @@
             border: 2px solid #e67e22;
         }
         
-        /* WARNA TOMBOL DISINKRONKAN DENGAN WARNA LAPORAN SHEET */
+        /* WARNA TOMBOL SESUAI LAPORAN SHEET */
         .btn-opsi-sholat {
             flex: 1;
             min-width: 140px;
@@ -170,26 +170,36 @@
         </div>
 
         <div id="wadahAbsenSholat" style="display: none;">
-            </div>
+            <!-- Baris Sholat -->
+        </div>
     </div>
 
     <script>
+        // 1. Deklarasi Konfigurasi Awal & Fungsi Pembantu Waktu (Paling Atas agar Aman)
         const URL_WEB_APP = "https://script.google.com/macros/s/AKfycby2eSlbUJGw2YBQIyYCZXmZ1G_yv1eC8zbIBAU6WbSHgdjma21lym5hWKkobzegHrqL/exec"; 
         
         let jadwalMedan = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52", "S_Besok": "05:02" };
         let profilSiswa = null; 
 
+        function ClinicalTime(dateObj) {
+            return dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/\./g, ':');
+        }
+
+        function _toMenit(j) { const [h, m] = j.split(':').map(Number); return h * 60 + m; }
+        function _toJamStr(mTotal) { 
+            let mAsli = mTotal % 1440; 
+            return `${String(Math.floor(mAsli / 60)).padStart(2,'0')}:${String(mAsli % 60).padStart(2,'0')}`; 
+        }
+
+        // 2. Menjalankan Jam Digital & Tanggal
+        document.getElementById('tglHariIni').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        
         setInterval(() => {
             const sekarang = new Date();
             document.getElementById('jamDigital').innerText = ClinicalTime(sekarang);
         }, 1000);
 
-        function ClinicalTime(dateObj) {
-            return dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/\./g, ':');
-        }
-
-        document.getElementById('tglHariIni').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
+        // 3. Ambil Jadwal Sholat dari Server
         fetch(URL_WEB_APP, { method: "POST", body: JSON.stringify({ action: "ambil_jadwal" }) })
         .then(r => r.json()).then(res => {
             if(res.status === "sukses") {
@@ -201,6 +211,7 @@
             }
         }).catch(() => {});
 
+        // 4. Fitur Utama Verifikasi NIM Siswa
         function verifikasiNIM() {
             const nim = document.getElementById('nimSiswa').value;
             const statusBox = document.getElementById('statusProfil');
@@ -210,6 +221,8 @@
             if(nim.length < 3) {
                 document.getElementById('wadahAbsenSholat').style.display = "none";
                 passInput.disabled = true; passInput.value = ""; btnSimpan.disabled = true;
+                statusBox.className = "alert alert-secondary mb-0 p-2 d-flex align-items-center fw-bold small";
+                statusBox.innerHTML = "Silakan masukkan NIM terlebih dahulu.";
                 return;
             }
             
@@ -244,6 +257,7 @@
             });
         }
 
+        // 5. Fitur Pengaturan Password Baru
         function simpanPasswordBaru() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -261,6 +275,7 @@
                     cekPasswordKetik(); 
                 } else {
                     alert("Gagal mendaftarkan password ke server.");
+                    verifikasiNIM();
                 }
             }).catch(() => {
                 profilSiswa.password = passVal;
@@ -269,6 +284,7 @@
             });
         }
 
+        // 6. Cek Password Realtime saat Diketik Siswa
         function cekPasswordKetik() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -291,8 +307,8 @@
             }
         }
 
+        // 7. Render Tombol Berwarna Sesuai Aturan Poin Laporan Sheet
         function generateBentukTombolSholat(isLakiLaki) {
-            // FIX KOREKSI: Pemilihan ID wadah dibersihkan dari salah ketik kata 'wadax'
             const wadah = document.getElementById('wadahAbsenSholat');
             wadah.innerHTML = "";
 
@@ -370,12 +386,6 @@
             });
         }
 
-        function _toMenit(j) { const [h, m] = j.split(':').map(Number); return h * 60 + m; }
-        function _toJamStr(mTotal) { 
-            let mAsli = mTotal % 1440; 
-            return `${String(Math.floor(mAsli / 60)).padStart(2,'0')}:${String(mAsli % 60).padStart(2,'0')}`; 
-        }
-
         function prosesUdzurPerempuan(kodeSholat) {
             const tanya = confirm("Sudahkah kamu bersholawat sebanyak 4 kali sebagai pengganti sholat fardhu?");
             if (tanya) {
@@ -385,6 +395,7 @@
             }
         }
 
+        // 8. Kirim Data Sholat ke Google Sheets Backend
         function prosesKlaim(kodeSholat, jenisKlik, poinNilai, warnaKolom) {
             const baris = document.getElementById(`baris-${kodeSholat}`);
             const semuaTombolDiBaris = baris.querySelectorAll('button');
