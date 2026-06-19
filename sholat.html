@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Monitoring Sholat Fiqih | SMP Yaspi</title>
-    <!-- CSS Internal Kokoh (Anti Gagal Muat/Broken Layout) -->
     <style>
         * {
             box-sizing: border-box;
@@ -25,7 +24,7 @@
         .header-sholat { 
             background: linear-gradient(135deg, #0b6623 0%, #053b11 100%); 
             color: white; 
-            padding: 30px 20px; 
+            padding: 25px 20px; 
             border-bottom-left-radius: 25px; 
             border-bottom-right-radius: 25px; 
             margin-bottom: 25px;
@@ -48,7 +47,7 @@
         }
         .kembali-link:hover { opacity: 1; }
         .judul-apps {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
             margin-bottom: 5px;
         }
@@ -62,9 +61,9 @@
             background-color: #1a5276;
             color: white;
             font-weight: 700;
-            padding: 8px 15px;
+            padding: 6px 15px;
             border-radius: 8px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 1px;
         }
         .text-warning { color: #d4af37; font-weight: bold; font-size: 0.85rem; margin-top: 5px; }
@@ -138,7 +137,7 @@
         .alert-success { background-color: #d4edda; color: #155724; border-left: 5px solid #28a745; }
         .alert-danger { background-color: #f8d7da; color: #721c24; border-left: 5px solid #dc3545; }
 
-        /* Desain Baris Tombol Sholat */
+        /* Layout Baris Tombol Sesuai Sketsa */
         .sholat-row {
             display: flex;
             align-items: center;
@@ -151,11 +150,11 @@
             overflow-x: auto;
         }
         .sholat-indeks {
-            background-color: #2980b9;
+            background-color: #4a7ebb;
             color: white;
             padding: 15px;
             border-radius: 10px;
-            min-width: 160px;
+            min-width: 150px;
             text-align: center;
             font-weight: bold;
         }
@@ -172,13 +171,13 @@
         
         .btn-opsi-sholat {
             flex: 1;
-            min-width: 150px;
+            min-width: 140px;
             height: 85px;
             border-radius: 12px;
             border: none;
             color: white;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -186,6 +185,7 @@
             cursor: pointer;
             transition: transform 0.1s, opacity 0.2s;
             padding: 8px;
+            text-align: center;
         }
         .btn-opsi-sholat:active { transform: scale(0.98); }
         .btn-opsi-sholat:disabled {
@@ -195,11 +195,11 @@
             opacity: 0.5;
         }
         
-        .btn-biru { background-color: #1f618d; }      
-        .btn-abu { background-color: #707b7c; }       
-        .btn-hijau { background-color: #1e8449; }     
-        .btn-kuning { background-color: #f1c40f; color: #2c3e50; }    
-        .btn-merah { background-color: #b03a2e; }      
+        /* Pewarnaan Tombol Berdasarkan Sketsa Bapak */
+        .btn-blue { background-color: #4a7ebb; }       /* Berjamaah / Udzur */
+        .btn-green { background-color: #5b9bd5; }      /* Awal Waktu */
+        .btn-yellow { background-color: #41719c; }     /* Pertengahan Waktu */
+        .btn-soft-red { background-color: #2f5597; }   /* Akhir Waktu */
         
         .btn-opsi-sholat span {
             font-size: 0.75rem;
@@ -232,7 +232,6 @@
     </div>
 
     <div class="container">
-        <!-- Card Verifikasi -->
         <div class="sholat-card">
             <div class="card-title">Verifikasi Akses & Password Murid</div>
             <div class="form-grid">
@@ -256,23 +255,16 @@
             </div>
         </div>
 
-        <!-- Wadah Utama Tombol Absensi Sholat -->
         <div id="wadahAbsenSholat" style="display: none;">
-            <!-- Baris Sholat digenerate otomatis melalui JS di bawah -->
-        </div>
+            </div>
     </div>
 
-    <!-- SCRIPT UTAMA - DIISOLASI DENGAN AMAN -->
     <script type="text/javascript">
-        // Link Web App Apps Script milik Pak Ifham yang baru
+        // ALAMAT WEB APP ASLI MILIK PAK IFHAM YANG BENAR:
         const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbyGC6vfUe-b5_XvmZoXauQ0iMwb_g7xa3G2voFheGqHyRyz28clL3WyELFM6WZ81Zgu/exec"; 
         
         let jadwalMedan = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52", "S_Besok": "05:02" };
         let profilSiswa = null; 
-
-        function ClinicalTime(dateObj) {
-            return dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/\./g, ':');
-        }
 
         function _toMenit(j) { const [h, m] = j.split(':').map(Number); return h * 60 + m; }
         function _toJamStr(mTotal) { 
@@ -283,13 +275,13 @@
         // Set Tanggal Hari Ini
         document.getElementById('tglHariIni').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         
-        // Jalankan Jam Digital
+        // Jam Digital Berdetik
         setInterval(() => {
             const sekarang = new Date();
-            document.getElementById('jamDigital').innerText = ClinicalTime(sekarang);
+            document.getElementById('jamDigital').innerText = sekarang.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/\./g, ':');
         }, 1000);
 
-        // Ambil data jadwal sholat otomatis dari Apps Script saat web dibuka
+        // Ambil data jadwal sholat otomatis dari Apps Script
         fetch(URL_WEB_APP, { method: "POST", body: JSON.stringify({ action: "ambil_jadwal" }) })
         .then(r => r.json()).then(res => {
             if(res.status === "sukses") {
@@ -301,6 +293,7 @@
             }
         }).catch(() => {});
 
+        // Verifikasi NIM Murid
         function verifikasiNIM() {
             const nim = document.getElementById('nimSiswa').value;
             const statusBox = document.getElementById('statusProfil');
@@ -346,6 +339,7 @@
             });
         }
 
+        // Daftarkan Password Baru Murid
         function simpanPasswordBaru() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -362,14 +356,15 @@
                     document.getElementById('btnSimpanPw').disabled = true; 
                     cekPasswordKetik(); 
                 } else {
-                    alert("Gagal mendaftarkan password ke server.");
+                    alert("Gagal mendaftarkan password.");
                     verifikasiNIM();
                 }
             }).catch(() => {
-                alert("Koneksi gagal saat mendaftarkan password.");
+                alert("Koneksi gagal mendaftarkan password.");
             });
         }
 
+        // Cek Ketikan Password
         function cekPasswordKetik() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -392,6 +387,7 @@
             }
         }
 
+        // Bentuk Tombol Horizontal Fiqih Sesuai Sketsa Asli
         function generateBentukTombolSholat(isLakiLaki) {
             const wadah = document.getElementById('wadahAbsenSholat');
             wadah.innerHTML = "";
@@ -424,14 +420,14 @@
                 let tombolUtamaHTML = "";
                 if(isLakiLaki) {
                     tombolUtamaHTML = `
-                        <button id="btn-${s.kode}-BERJAMAAH" class="btn-opsi-sholat btn-biru" onclick="prosesKlaim('${s.kode}', 'BERJAMAAH', 20, 'biru')">
+                        <button id="btn-${s.kode}-BERJAMAAH" class="btn-opsi-sholat btn-blue" onclick="prosesKlaim('${s.kode}', 'BERJAMAAH', 20, 'biru')">
                             BERJAMAAH
                             <span class="text-sub-tombol">20 POINT</span>
                         </button>
                     `;
                 } else {
                     tombolUtamaHTML = `
-                        <button id="btn-${s.kode}-UDZUR" class="btn-opsi-sholat btn-abu" onclick="prosesUdzurPerempuan('${s.kode}')">
+                        <button id="btn-${s.kode}-UDZUR" class="btn-opsi-sholat btn-blue" onclick="prosesUdzurPerempuan('${s.kode}')">
                             UDZUR SYAR'I
                             <span class="text-sub-tombol">WARNA ABU</span>
                         </button>
@@ -445,17 +441,17 @@
                             <span class="kotak-jam-masuk">${jadwalMedan[s.kode]}</span>
                         </div>
                         ${tombolUtamaHTML}
-                        <button id="btn-${s.kode}-AWAL" class="btn-opsi-sholat btn-hijau" onclick="prosesKlaim('${s.kode}', 'AWAL', ${isLakiLaki ? 15 : 20}, 'hijau')">
+                        <button id="btn-${s.kode}-AWAL" class="btn-opsi-sholat btn-green" onclick="prosesKlaim('${s.kode}', 'AWAL', ${isLakiLaki ? 15 : 20}, 'hijau')">
                             AWAL WAKTU
                             <span>${rangeAwal}</span>
                             <span class="text-sub-tombol">${isLakiLaki ? 15 : 20} POINT</span>
                         </button>
-                        <button id="btn-${s.kode}-TENGAH" class="btn-opsi-sholat btn-kuning" onclick="prosesKlaim('${s.kode}', 'TENGAH', 10, 'kuning')">
+                        <button id="btn-${s.kode}-TENGAH" class="btn-opsi-sholat btn-yellow" onclick="prosesKlaim('${s.kode}', 'TENGAH', 10, 'kuning')">
                             PERTENGAHAN
                             <span>${rangeTengah}</span>
                             <span class="text-sub-tombol">10 POINT</span>
                         </button>
-                        <button id="btn-${s.kode}-AKHIR" class="btn-opsi-sholat btn-merah" onclick="prosesKlaim('${s.kode}', 'AKHIR', 5, 'merah')">
+                        <button id="btn-${s.kode}-AKHIR" class="btn-opsi-sholat btn-soft-red" onclick="prosesKlaim('${s.kode}', 'AKHIR', 5, 'merah')">
                             AKHIR WAKTU
                             <span>${rangeAkhir}</span>
                             <span class="text-sub-tombol">5 POINT</span>
@@ -505,7 +501,7 @@
                 }
             })
             .catch(() => {
-                alert("Error: Gagal terhubung ke server. Periksa jaringan Anda!");
+                alert("Error: Gagal terhubung ke database server! Mohon pastikan kembali Apps Script Anda sudah di-deploy ulang sebagai 'Anyone'.");
                 semuaTombolDiBaris.forEach(btn => btn.disabled = false);
             });
         }
