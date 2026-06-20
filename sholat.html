@@ -245,25 +245,34 @@
         }
 
         // 3. Simpan Password Baru (Hanya untuk pendaftaran pertama)
-        function simpanPasswordBaru() {
-            const passVal = document.getElementById('passSiswa').value.trim();
-            const statusBox = document.getElementById('statusProfil');
-            if(passVal.length < 4) { alert("Buat password minimal 4 karakter/angka!"); return; }
+function simpanPasswordBaru() {
+    const passVal = document.getElementById('passSiswa').value.trim();
+    const statusBox = document.getElementById('statusProfil');
+    if(passVal.length < 4) { alert("Buat password minimal 4 karakter/angka!"); return; }
 
-            statusBox.innerHTML = "Menyimpan password...";
-            fetch(URL_WEB_APP, {
-                method: "POST",
-                body: JSON.stringify({ action: "daftar_password", nim: profilSiswa.nim, password_baru: passVal })
-            })
-            .then(r => r.json()).then(res => {
-                if(res.status === "sukses") {
-                    profilSiswa.password = passVal;
-                    document.getElementById('btnSimpanPw').disabled = true; // Langsung Nonaktif Selamanya
-                    cekPasswordKetik(); 
-                }
-            });
+    statusBox.innerHTML = "Menyimpan password...";
+    fetch(URL_WEB_APP, {
+        method: "POST",
+        body: JSON.stringify({ 
+            action: "simpan_password", // Disamakan dengan Apps Script
+            nim: document.getElementById('nimSiswa').value, // Mengambil langsung dari input NIM
+            password: passVal // Menggunakan key 'password' agar terbaca Apps Script
+        })
+    })
+    .then(r => r.json()).then(res => {
+        if(res.status === "sukses") {
+            alert("Password berhasil disimpan!");
+            profilSiswa.password = passVal;
+            document.getElementById('btnSimpanPw').disabled = true; 
+            cekPasswordKetik(); 
+        } else {
+            alert("Gagal menyimpan: " + res.pesan);
+            statusBox.innerHTML = "Gagal menyimpan password.";
         }
-
+    }).catch(() => {
+        alert("Eror koneksi saat menyimpan password.");
+    });
+}
         // 4. Pengecekan Password untuk Buka Layout Utama
         function cekPasswordKetik() {
             const passVal = document.getElementById('passSiswa').value.trim();
