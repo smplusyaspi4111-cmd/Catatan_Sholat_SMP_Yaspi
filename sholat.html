@@ -41,7 +41,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
         }
         
-        /* Layout Baris Sholat Horizontal ala Sketsa */
+        /* Layout Baris Sholat Horizontal */
         .sholat-row {
             display: flex;
             align-items: center;
@@ -86,7 +86,7 @@
             border: 2px solid #e67e22;
         }
         
-        /* Desain Tombol Sesuai Warna Sketsa Bapak */
+        /* Desain Tombol */
         .btn-opsi-sholat {
             flex: 1;
             min-width: 140px;
@@ -130,14 +130,13 @@
 </head>
 <body>
 
-    <!-- Bagian Atas Header -->
     <div class="header-sholat shadow-sm">
         <div class="container d-flex justify-content-between align-items-center flex-wrap g-2">
             <div>
                 <a href="index.html" class="text-white text-decoration-none small"><i class="fa-solid fa-arrow-left me-1"></i> Kembali ke Portal</a>
                 <h4 class="fw-bold mt-2 mb-1">📋 CATATAN SHOLAT SMP YASPI MEDAN</h4>
                 <div class="d-flex align-items-center gap-3 mt-2 flex-wrap">
-                    <span class="text-white" id="tglHariIni">Jum'at, 19 Juni 2026</span>
+                    <span class="text-white" id="tglHariIni">Menghitung hari...</span>
                     <div class="jam-aktif" id="jamDigital">00:00:00</div>
                 </div>
                 <div class="fw-bold text-warning small mt-1">KOTA MEDAN AUTOMATIC</div>
@@ -146,7 +145,6 @@
     </div>
 
     <div class="container my-4">
-        <!-- Verifikasi Akses & Password Card -->
         <div class="card sholat-card p-4 mb-4">
             <h5 class="fw-bold mb-3 text-muted text-uppercase" style="font-size: 0.9rem; letter-spacing: 1px;">VERIFIKASI AKSES & PASSWORD</h5>
             <div class="row g-3 align-items-end">
@@ -170,18 +168,16 @@
             </div>
         </div>
 
-        <!-- Area Pengisian Laporan Sholat Berbaris Kebawah (Isi Memanjang Kanan) -->
         <div id="wadahAbsenSholat" style="display: none;">
-            <!-- Baris Sholat akan di-generate otomatis via JavaScript sesuai Gender Siswa -->
-        </div>
+            </div>
     </div>
 
     <script>
+        // PENTING: Ganti URL di bawah ini dengan tautan Web App Web Deployment Anda jika berubah
         const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbxb03McgYYM0ugUkAGETJQeksycBmX0QzCfHhnqFgHLwKNcUjyvM3r2D_KH7Aj4JEzR/exec"; 
         
         let jadwalMedan = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52", "S_Besok": "05:02" };
         let profilSiswa = null; 
-        let namaHariIni = new Date().toLocaleDateString('id-ID', { weekday: 'long' });
 
         // 1. Jalankan Jam Digital Aktif Berdetik
         setInterval(() => {
@@ -213,6 +209,8 @@
             if(nim.length < 3) {
                 document.getElementById('wadahAbsenSholat').style.display = "none";
                 passInput.disabled = true; passInput.value = ""; btnSimpan.disabled = true;
+                statusBox.className = "alert alert-secondary mb-0 p-2 d-flex align-items-center fw-bold small";
+                statusBox.innerHTML = "Silakan masukkan NIM terlebih dahulu.";
                 return;
             }
             
@@ -232,7 +230,7 @@
                     } else {
                         statusBox.className = "alert alert-info mb-0 p-2 d-flex align-items-center fw-bold small";
                         statusBox.innerHTML = "NIM terverifikasi! Masukkan password kamu.";
-                        btnSimpan.disabled = true; // Kunci tombol simpan karena password sudah ada
+                        btnSimpan.disabled = true;
                     }
                 } else {
                     profilSiswa = null;
@@ -241,39 +239,43 @@
                     statusBox.className = "alert alert-danger mb-0 p-2 d-flex align-items-center fw-bold small";
                     statusBox.innerHTML = "NIM tidak terdaftar di Database!";
                 }
+            }).catch(() => {
+                statusBox.className = "alert alert-danger mb-0 p-2 d-flex align-items-center fw-bold small";
+                statusBox.innerHTML = "Gagal terhubung ke database server!";
             });
         }
 
-        // 3. Simpan Password Baru (Hanya untuk pendaftaran pertama)
-function simpanPasswordBaru() {
-    const passVal = document.getElementById('passSiswa').value.trim();
-    const statusBox = document.getElementById('statusProfil');
-    if(passVal.length < 4) { alert("Buat password minimal 4 karakter/angka!"); return; }
+        // 3. Simpan Password Baru (Sisi Perbaikan Utama)
+        function simpanPasswordBaru() {
+            const passVal = document.getElementById('passSiswa').value.trim();
+            const statusBox = document.getElementById('statusProfil');
+            if(passVal.length < 4) { alert("Buat password minimal 4 karakter/angka!"); return; }
 
-    statusBox.innerHTML = "Menyimpan password...";
-    fetch(URL_WEB_APP, {
-        method: "POST",
-        body: JSON.stringify({ 
-            action: "simpan_password", // Disamakan dengan Apps Script
-            nim: document.getElementById('nimSiswa').value, // Mengambil langsung dari input NIM
-            password: passVal // Menggunakan key 'password' agar terbaca Apps Script
-        })
-    })
-    .then(r => r.json()).then(res => {
-        if(res.status === "sukses") {
-            alert("Password berhasil disimpan!");
-            profilSiswa.password = passVal;
-            document.getElementById('btnSimpanPw').disabled = true; 
-            cekPasswordKetik(); 
-        } else {
-            alert("Gagal menyimpan: " + res.pesan);
-            statusBox.innerHTML = "Gagal menyimpan password.";
+            statusBox.innerHTML = "<i class='fa-solid fa-spinner fa-spin me-2'></i> Menyimpan password...";
+            fetch(URL_WEB_APP, {
+                method: "POST",
+                body: JSON.stringify({ 
+                    action: "simpan_password", 
+                    nim: document.getElementById('nimSiswa').value, 
+                    password: passVal 
+                })
+            })
+            .then(r => r.json()).then(res => {
+                if(res.status === "sukses") {
+                    alert("Password berhasil disimpan!");
+                    profilSiswa.password = passVal;
+                    document.getElementById('btnSimpanPw').disabled = true; 
+                    cekPasswordKetik(); 
+                } else {
+                    alert("Gagal menyimpan: " + res.pesan);
+                    statusBox.innerHTML = "Gagal menyimpan password.";
+                }
+            }).catch(() => {
+                alert("Eror koneksi saat menyimpan password.");
+            });
         }
-    }).catch(() => {
-        alert("Eror koneksi saat menyimpan password.");
-    });
-}
-        // 4. Pengecekan Password untuk Buka Layout Utama
+
+        // 4. Pengecekan Password & Buka Layout Sesuai Gender
         function cekPasswordKetik() {
             const passVal = document.getElementById('passSiswa').value.trim();
             const statusBox = document.getElementById('statusProfil');
@@ -296,7 +298,7 @@ function simpanPasswordBaru() {
             }
         }
 
-        // 5. Pembentukan Tombol Horizontal Sesuai Aturan Waktu Fiqih & File Sketsa Bapak
+        // 5. Pembentukan Struktur Tombol Berdasarkan Aturan Fiqih
         function generateBentukTombolSholat(isLakiLaki) {
             const wadah = document.getElementById('wadahAbsenSholat');
             wadah.innerHTML = "";
@@ -304,7 +306,7 @@ function simpanPasswordBaru() {
             const daftarSholat = [
                 { kode: "S", nama: "SHUBUH", ikon: "fa-cloud-sun", durasi: 90 },
                 { kode: "Z", nama: "ZUHUR", ikon: "fa-sun", durasi: 0 },
-                { kode: "A", nama: "ASHAR", ikon: "fa-cloud-sun-brightness", durasi: 0 },
+                { kode: "A", nama: "ASHAR", ikon: "fa-cloud-sun", durasi: 0 },
                 { kode: "M", nama: "MAGHRIB", ikon: "fa-cloud-moon", durasi: 0 },
                 { kode: "I", nama: "ISYA", ikon: "fa-moon", durasi: 0 }
             ];
@@ -317,17 +319,15 @@ function simpanPasswordBaru() {
                 else if (s.kode === 'Z') hAkhir = _toMenit(jadwalMedan.A);
                 else if (s.kode === 'A') hAkhir = _toMenit(jadwalMedan.M);
                 else if (s.kode === 'M') hAkhir = _toMenit(jadwalMedan.I);
-                else if (s.kode === 'I') hAkhir = _toMenit(jadwalMedan.S_Besok) + 1440 - 10; // Batas Akhir Isya: 10 menit sebelum fajar subuh besok
+                else if (s.kode === 'I') hAkhir = _toMenit(jadwalMedan.S_Besok) + 1440 - 10;
 
                 const totalDurasi = hAkhir - hMulai;
                 const sepertiga = totalDurasi / 3;
 
-                // Hitung Batas Teks Rentang Jam untuk Tombol
                 const rangeAwal = `${jadwalMedan[s.kode]} - ${_toJamStr(hMulai + sepertiga)}`;
                 const rangeTengah = `${_toJamStr(hMulai + sepertiga + 1)} - ${_toJamStr(hMulai + (sepertiga * 2))}`;
                 const rangeAkhir = `${_toJamStr(hMulai + (sepertiga * 2) + 1)} - ${_toJamStr(hAkhir)}`;
 
-                // Tentukan Tombol Kiri Utama (Laki-laki = Berjamaah Masjid, Perempuan = Udzur Bulan)
                 let tombolUtamaHTML = "";
                 if(isLakiLaki) {
                     tombolUtamaHTML = `
@@ -351,21 +351,17 @@ function simpanPasswordBaru() {
                             <i class="fa-solid ${s.ikon} me-1"></i> ${s.nama}<br>
                             <span class="kotak-jam-masuk">${jadwalMedan[s.kode]}</span>
                         </div>
-                        
                         ${tombolUtamaHTML}
-
                         <button id="btn-${s.kode}-AWAL" class="btn-opsi-sholat btn-green" onclick="prosesKlaim('${s.kode}', 'AWAL', ${isLakiLaki ? 15 : 20}, 'hijau')">
                             AWAL WAKTU
                             <span>${rangeAwal}</span>
                             <span class="text-sub-tombol">5 POINT</span>
                         </button>
-
                         <button id="btn-${s.kode}-TENGAH" class="btn-opsi-sholat btn-yellow" onclick="prosesKlaim('${s.kode}', 'TENGAH', 10, 'kuning')">
                             PERTENGAHAN WAKTU
                             <span>${rangeTengah}</span>
                             <span class="text-sub-tombol">5 POINT</span>
                         </button>
-
                         <button id="btn-${s.kode}-AKHIR" class="btn-opsi-sholat btn-soft-red" onclick="prosesKlaim('${s.kode}', 'AKHIR', 5, 'merah')">
                             AKHIR WAKTU
                             <span>${rangeAkhir}</span>
@@ -383,7 +379,7 @@ function simpanPasswordBaru() {
             return `${String(Math.floor(mAsli / 60)).padStart(2,'0')}:${String(mAsli % 60).padStart(2,'0')}`; 
         }
 
-        // 6. Logika Khusus Udzur Syar'i (Datang Bulan) Perempuan
+        // 6. Logika Khusus Udzur Syar'i (Datang Bulan)
         function prosesUdzurPerempuan(kodeSholat) {
             const tanya = confirm("Sudahkah kamu bersholawat sebanyak 4 kali sebagai pengganti sholat fardhu?");
             if (tanya) {
@@ -393,9 +389,8 @@ function simpanPasswordBaru() {
             }
         }
 
-        // 7. Eksekusi Laporan Ke Server & Kunci Tombol Otomatis (Anti-Iseng / Klik Ganda)
+        // 7. Eksekusi Laporan Ke Server Google
         function prosesKlaim(kodeSholat, jenisKlik, poinNilai, warnaKolom) {
-            // Langsung kunci seluruh tombol di baris sholat tersebut demi keamanan data
             const baris = document.getElementById(`baris-${kodeSholat}`);
             const semuaTombolDiBaris = baris.querySelectorAll('button');
             semuaTombolDiBaris.forEach(btn => btn.disabled = true);
@@ -421,12 +416,12 @@ function simpanPasswordBaru() {
                     alert("Sukses! Data laporan absensi sholat kamu telah berhasil terekam di database sistem.");
                 } else {
                     alert("Gagal menyimpan data: " + res.pesan);
-                    // Jika gagal dari server, buka kembali tombolnya
                     semuaTombolDiBaris.forEach(btn => btn.disabled = false);
                 }
             })
             .catch(() => {
-                alert("Sistem Aman! Laporan disimulasikan berhasil masuk lembar rekap.");
+                alert("Terjadi masalah koneksi ke Google Sheets. Silakan coba kembali.");
+                semuaTombolDiBaris.forEach(btn => btn.disabled = false);
             });
         }
     </script>
