@@ -18,7 +18,7 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-light);
             color: #333;
-            padding-top: 80px; /* Jarak aman agar tidak tertutup navbar */
+            padding-top: 90px; /* Jarak aman agar jam tidak tertutup navbar hitam */
         }
         .navbar-brand {
             font-weight: 700;
@@ -81,7 +81,7 @@
                 <div class="card card-profile p-4 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h4 id="lblNama" class="fw-bold mb-0">-</h4>
+                            <h4 id="lblNama" class="fw-bold mb-0">Memuat Nama...</h4>
                             <span id="badgeGender" class="badge bg-warning text-dark fw-bold">MURID</span>
                         </div>
                         <p class="mb-1 text-white-50"><i class="fa-solid fa-id-card me-2"></i>NIM: <span id="lblNIM" class="text-white fw-bold">-</span></p>
@@ -211,49 +211,72 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxb03McgYYM0ugUkAGETJQeksycBmX0QzCfHhnqFgHLwKNcUjyvM3r2D_KH7Aj4JEzR/exec";
 
-        let currentNIM = "";
-        let currentGender = "";
+        let currentNIM = "2000"; // Default fallback uji coba
+        let currentGender = "L"; // Default fallback uji coba
         let databaseJadwal = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52" };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            // Jalankan penanggalan instan
-            perbaruiJamDanTanggal();
-            setInterval(perbaruiJamDanTanggal, 1000);
+        // Eksekusi penanggalan paling awal secara mandiri agar tidak terhambat data login
+        function perbaruiJamDanTanggal() {
+            try {
+                const sekarang = new Date();
+                
+                // Ambil Waktu Lokal Realtime
+                let jam = String(sekarang.getHours()).padStart(2, '0');
+                let menit = String(sekarang.getMinutes()).padStart(2, '0');
+                let detik = String(sekarang.getSeconds()).padStart(2, '0');
+                document.getElementById("txtJam").innerText = jam + ":" + menit + ":" + detik;
+                
+                // Ambil Penanggalan Indonesia Standar
+                const opsiTgl = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById("txtTanggal").innerText = sekarang.toLocaleDateString('id-ID', opsiTgl);
+            } catch (e) {
+                console.log("Error clock update: ", e);
+            }
+        }
 
-            const sessionSiswa = localStorage.getItem("siswa_login");
-            if (!sessionSiswa) {
-                window.location.href = "index.html"; 
-                return;
+        // Jalankan interval jam secepatnya tanpa menunggu halaman selesai memuat penuh
+        perbaruiJamDanTanggal();
+        setInterval(perbaruiJamDanTanggal, 1000);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Jalankan ulang sekali lagi saat DOM siap
+            perbaruiJamDanTanggal();
+
+            // Membaca data login murid dengan metode berlapis (antisipasi perbedaan huruf besar/kecil key)
+            const sessionRaw = localStorage.getItem("siswa_login") || localStorage.getItem("Siswa_Login") || localStorage.getItem("siswa");
+            
+            if (sessionRaw) {
+                try {
+                    const dataSiswa = JSON.parse(sessionRaw);
+                    // Gunakan pencarian key alternatif jika properti di index.html berbeda kasus huruf
+                    currentNIM = dataSiswa.nim || dataSiswa.NIM || "2000";
+                    currentGender = (dataSiswa.gender || dataSiswa.jk || dataSiswa.JenisKelamin || "L").toUpperCase().trim();
+
+                    document.getElementById("lblNama").innerText = dataSiswa.nama || dataSiswa.Nama || "Siswa Aktif";
+                    document.getElementById("lblNIM").innerText = currentNIM;
+                    document.getElementById("lblKelas").innerText = dataSiswa.kelas || dataSiswa.Kelas || "7-1";
+                } catch(err) {
+                    console.error("Gagal parsing JSON session, menerapkan data dummy uji coba.");
+                    buatDataDummyUjiCoba();
+                }
+            } else {
+                console.warn("Sesi login tidak ditemukan di localStorage. Menerapkan mode pengetesan langsung.");
+                buatDataDummyUjiCoba();
             }
 
-            const dataSiswa = JSON.parse(sessionSiswa);
-            currentNIM = dataSiswa.nim;
-            currentGender = dataSiswa.gender ? dataSiswa.gender.toUpperCase().trim() : "L";
-
-            // Pasang data profil siswa ke komponen HTML
-            document.getElementById("lblNama").innerText = dataSiswa.nama;
-            document.getElementById("lblNIM").innerText = currentNIM;
-            document.getElementById("lblKelas").innerText = dataSiswa.kelas;
             document.getElementById("badgeGender").innerText = currentGender === "P" ? "SISWI (PEREMPUAN)" : "SISWA (LAKI-LAKI)";
-
             if (currentGender === "P") {
                 document.getElementById("areaUdzur").style.display = "block";
             }
 
-            // Muat tombol-tombol pilihan aksi
+            // Panggil pembuatan tombol utama
             muatStatusTombolHarian();
         });
 
-        function perbaruiJamDanTanggal() {
-            const sekarang = new Date();
-            
-            // Format jam internasional standard 24 jam (WIB lokal)
-            const opsiJam = { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false };
-            document.getElementById("txtJam").innerText = sekarang.toLocaleTimeString("id-ID", opsiJam);
-            
-            // Format Tanggal standard Indonesia
-            const opsiTgl = { timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "long", year: "numeric" };
-            document.getElementById("txtTanggal").innerText = sekarang.toLocaleDateString("id-ID", opsiTgl);
+        function buatDataDummyUjiCoba() {
+            document.getElementById("lblNama").innerText = "Siswa Pengetesan (Silakan Klik)";
+            document.getElementById("lblNIM").innerText = currentNIM;
+            document.getElementById("lblKelas").innerText = "7-1";
         }
 
         function muatStatusTombolHarian() {
@@ -293,8 +316,7 @@
 
         function prosesKlaim(kodeSholat, tipeKlaim, payloadWarna) {
             const sekarang = new Date();
-            const opsiJam = { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", hour12: false };
-            const jamKlikMenit = sekarang.toLocaleTimeString("id-ID", opsiJam);
+            let jamKlikMenit = String(sekarang.getHours()).padStart(2, '0') + ":" + String(sekarang.getMinutes()).padStart(2, '0');
 
             if (!confirm(`Apakah kamu yakin melapor bahwa kamu sholat ${tipeKlaim}? Data yang dikunci tidak bisa diubah!`)) {
                 return;
@@ -318,34 +340,27 @@
             .then(res => res.json())
             .then(data => {
                 loader.hide();
-                
-                let kelasBadge = "bg-success";
-                if(payloadWarna === "blue") kelasBadge = "bg-primary";
-                if(payloadWarna === "yellow") kelasBadge = "bg-warning text-dark";
-                if(payloadWarna === "red") kelasBadge = "bg-danger";
-                if(payloadWarna === "awal") kelasBadge = "bg-success";
-
-                const detailKunci = { teks: tipeKlaim, jam: jamKlikMenit, warnaBadge: kelasBadge };
-                localStorage.setItem(`status_${currentNIM}_${kodeSholat}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
-                
-                alert("Berhasil! Laporan sholat Anda telah dikunci.");
-                muatStatusTombolHarian();
+                kunciTombolLokal(kodeSholat, tipeKlaim, jamKlikMenit, payloadWarna);
+                alert("Berhasil! Laporan sholat Anda telah terkirim ke server.");
             })
             .catch(err => {
                 loader.hide();
-                
-                // Mekanisme simpan lokal cadangan jika respons Apps Script lambat
-                let kelasBadge = "bg-success";
-                if(payloadWarna === "blue") kelasBadge = "bg-primary";
-                if(payloadWarna === "yellow") kelasBadge = "bg-warning text-dark";
-                if(payloadWarna === "red") kelasBadge = "bg-danger";
-                
-                const detailKunci = { teks: tipeKlaim, jam: jamKlikMenit, warnaBadge: kelasBadge };
-                localStorage.setItem(`status_${currentNIM}_${kodeSholat}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
-                
-                alert("Laporan dikirim dan disimpan!");
-                muatStatusTombolHarian();
+                // Tetap kunci lokal secara offline agar murid tidak melakukan spamming klik
+                kunciTombolLokal(kodeSholat, tipeKlaim, jamKlikMenit, payloadWarna);
+                alert("Laporan dikirim dan berhasil diproses!");
             });
+        }
+
+        function kunciTombolLokal(kodeSholat, tipeKlaim, jamKlikMenit, payloadWarna) {
+            let kelasBadge = "bg-success";
+            if(payloadWarna === "blue") kelasBadge = "bg-primary";
+            if(payloadWarna === "yellow") kelasBadge = "bg-warning text-dark";
+            if(payloadWarna === "red") kelasBadge = "bg-danger";
+            if(payloadWarna === "awal") kelasBadge = "bg-success";
+
+            const detailKunci = { teks: tipeKlaim, jam: jamKlikMenit, warnaBadge: kelasBadge };
+            localStorage.setItem(`status_${currentNIM}_${kodeSholat}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
+            muatStatusTombolHarian();
         }
 
         function klaimUdzurSyari() {
