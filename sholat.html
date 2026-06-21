@@ -3,309 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jurnal Sholat Digital | SMP Yaspi Medan</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <title>Portal Laporan Sholat - SMP YASPI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #0b6623;
-            --secondary-color: #d4af37;
-            --dark-blue: #1e293b;
-            --bg-light: #f8fafc;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-light);
-            color: #334155;
-            padding-top: 75px;
-        }
-        .navbar-custom { background-color: #1a1a1a; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .navbar-brand { font-weight: 700; font-size: 1.1rem; }
-        .card-profile {
-            background: linear-gradient(135deg, #2a3447 0%, #1e293b 100%);
-            color: white;
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
-        .badge-status-user { background-color: var(--secondary-color); color: #1e293b; font-weight: 700; font-size: 0.75rem; }
-        .clock-box { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .jam-realtime { font-size: 2.2rem; font-weight: 700; color: #0f172a; letter-spacing: 1px; }
-        .main-container { background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .sholat-row { border-bottom: 1px solid #f1f5f9; }
-        .sholat-row:last-child { border-bottom: none; }
-        .sholat-name { font-weight: 700; color: #0284c7; font-size: 1.05rem; }
-        
-        /* Tombol & Label Edukasi */
-        .wrapper-btn-edukasi { display: inline-block; text-align: center; margin: 4px; vertical-align: top; }
-        .btn-sholat { border-radius: 20px; font-weight: 600; font-size: 0.8rem; padding: 6px 18px; border: none; transition: all 0.2s; width: 95px; }
-        .btn-jamaah { background-color: #007bff; color: white; }
-        .btn-awal { background-color: #00a86b; color: white; }
-        .btn-tengah { background-color: #ffc107; color: #212529; }
-        .btn-akhir { background-color: #dc3545; color: white; }
-        .btn-sholat:hover { transform: scale(1.05); opacity: 0.9; }
-        .txt-info-jam { display: block; font-size: 10px; color: #64748b; font-weight: 600; margin-top: 3px; }
-        
-        .badge-kunci { background-color: #f1f5f9; color: #64748b; font-weight: 600; font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; }
-        .status-pill { font-size: 0.8rem; font-weight: 700; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card-sholat { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: white; margin-bottom: 20px; transition: transform 0.2s; }
+        .card-sholat:hover { transform: translateY(-3px); }
+        .btn-status { border-radius: 20px; font-weight: 600; font-size: 0.85rem; padding: 8px 15px; }
+        .header-profile { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border-radius: 0 0 25px 25px; padding: 25px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand navbar-dark navbar-custom fixed-top">
-        <div class="container">
-            <span class="navbar-brand mb-0"><i class="fa-solid fa-mosque text-warning me-2"></i> Jurnal Sholat Murid</span>
-            <button class="btn btn-outline-light btn-sm rounded-2 fw-semibold" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Keluar</button>
-        </div>
-    </nav>
+<script>
+    // LINK WEB APP DEPLOYMENT TERBARU BAPAK FUADY
+    const API_URL = "https://script.google.com/macros/s/AKfycbxeM42GjGTdvJj9R0IG2dHtTIzT1e85BVWfUMmfVmJp2OdE9N_5Y5XdNGzzjTTk38xj/exec";
 
-    <div class="container mb-5">
-        <div class="row g-3 mb-4">
-            <div class="col-md-4 text-center d-flex flex-column justify-content-center p-3 clock-box">
-                <div class="text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.75rem;">Waktu Saat Ini (WIB)</div>
-                <div id="txtJam" class="jam-realtime">00:00:00</div>
-                <div id="txtTanggal" class="text-secondary small fw-medium mt-1">Memuat kalender...</div>
-            </div>
-            <div class="col-md-8">
-                <div class="card card-profile p-4 h-100 d-flex flex-column justify-content-between">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h4 id="lblNama" class="fw-bold mb-0">Memuat Sesi...</h4>
-                            <span id="badgeGender" class="badge badge-status-user px-2.5 py-1.5 rounded-pill">MURID</span>
-                        </div>
-                        <div class="row g-2 text-white-50 small">
-                            <div class="col-auto"><i class="fa-solid fa-address-card"></i> NIM: <span id="lblNIM" class="text-white fw-semibold">-</span></div>
-                            <div class="col-12 m-0"></div>
-                            <div class="col-auto"><i class="fa-solid fa-graduation-cap"></i> Kelas: <span id="lblKelas" class="text-white fw-semibold">-</span></div>
-                        </div>
-                    </div>
-                    <div class="mt-2 text-end" id="areaUdzur" style="display: none;">
-                        <button class="btn btn-sm btn-danger fw-semibold px-3 py-1.5 rounded-pill shadow-sm" style="font-size: 0.8rem;" onclick="klaimUdzurSyari()">
-                            <i class="fa-solid fa-person-dress-burst me-1"></i> Klaim Udzur Syar'i (Berhalangan)
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    // Jam Batas Toleransi Sholat Fardhu
+    const masterJadwal = {
+        "S": { nama: "Subuh", buka: "04:30", tutup: "06:00" },
+        "Z": { nama: "Zuhur", buka: "12:00", tutup: "15:00" },
+        "A": { nama: "Ashar", buka: "15:15", tutup: "18:00" },
+        "M": { nama: "Maghrib", buka: "18:15", tutup: "19:15" },
+        "I": { nama: "Isya", buka: "19:30", tutup: "23:59" }
+    };
 
-        <div class="p-4 main-container">
-            <div class="d-flex align-items-center mb-4 border-bottom pb-2">
-                <h5 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-list-check text-success me-2"></i>Laporan Sholat Fardhu Hari Ini</h5>
-            </div>
-            
-            <div id="containerSholat">
-                <!-- ROW SHOLAT (SUBUH S/D ISYA) -->
-                <!-- Data diolah secara dinamis via JavaScript di bawah -->
-            </div>
-        </div>
+    let currentNIM = localStorage.getItem("login_nim") || "12345"; 
+    let currentNama = localStorage.getItem("login_nama") || "Murid SMP YASPI";
+    let currentJK = localStorage.getItem("login_jk") || "L"; 
+</script>
+
+<div class="container max-width-md px-3">
+    <div class="header-profile mb-4 text-center">
+        <i class="fa-solid fa-user-graduate fa-3x mb-2"></i>
+        <h4 class="fw-bold mb-1" id="lblNama">Loading...</h4>
+        <p class="mb-2 opacity-75" id="lblNIM">NIM: -</p>
+        <span class="badge bg-light text-dark px-3 py-2 rounded-pill fw-bold" id="lblHariIni">Hari Ini</span>
     </div>
 
-    <!-- MODAL LOADING SERVER -->
-    <div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content p-4 text-center border-0 shadow-lg" style="border-radius: 12px;">
-                <div class="spinner-border text-success mb-3" style="width: 2.5rem; height: 2.5rem;"></div>
-                <h6 class="fw-bold mb-1" style="color: #0f172a">Memproses ke Server...</h6>
-                <small class="text-muted">Mohon tunggu, jangan tutup halaman.</small>
-            </div>
-        </div>
+    <div id="areaUdzur" class="d-none mb-4">
+        <button onclick="klaimUdzurSyari()" class="btn btn-secondary w-100 py-3 rounded-3 fw-bold shadow-sm">
+            <i class="fa-solid fa-moon me-2"></i> Klik Disini Jika Sedang Halangan / Udzur Syar'i
+        </button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxb03McgYYM0ugUkAGETJQeksycBmX0QzCfHhnqFgHLwKNcUjyvM3r2D_KH7Aj4JEzR/exec";
+    <div class="row" id="containerSholat">
+        </div>
+</div>
 
-        let currentNIM = "";
-        let currentGender = "L";
+<div class="modal fade" id="loadingModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 bg-transparent text-center text-white">
+            <div class="spinner-border text-light mx-auto mb-2" style="width: 3rem; height: 3rem;" role="status"></div>
+            <h6 class="fw-bold">Mengunci laporan ke server...</h6>
+        </div>
+    </div>
+</div>
 
-        // JADWAL AKURAT MEDAN & RENTANG SEPERTIGA WAKTU OTOMATIS
-        const masterJadwal = {
-            "S": { nama: "Subuh", ikon: "fa-cloud-sun text-info", buka: "05:01", tutup: "06:25", awal: "05:01 - 05:29", tengah: "05:30 - 05:57", akhir: "05:58 - 06:25" },
-            "Z": { nama: "Zuhur", ikon: "fa-sun text-warning", buka: "12:28", tutup: "15:54", awal: "12:28 - 13:36", tengah: "13:37 - 14:45", akhir: "14:46 - 15:54" },
-            "A": { nama: "Ashar", ikon: "fa-cloud-sun-brightness text-warning", buka: "15:55", tutup: "18:36", awal: "15:55 - 16:48", tengah: "16:49 - 17:42", akhir: "17:43 - 18:36" },
-            "M": { nama: "Maghrib", ikon: "fa-cloud-moon text-danger", buka: "18:37", tutup: "19:51", awal: "18:37 - 19:01", tengah: "19:02 - 19:26", akhir: "19:27 - 19:51" },
-            "I": { nama: "Isya", ikon: "fa-moon text-secondary", buka: "19:52", tutup: "23:59", awal: "19:52 - 21:14", tengah: "21:15 - 22:37", akhir: "22:38 - 23:59" }
-        };
-
-        function perbaruiJamDanTanggal() {
-            const sekarang = new Date();
-            document.getElementById("txtJam").innerText = String(sekarang.getHours()).padStart(2, '0') + ":" + String(sekarang.getMinutes()).padStart(2, '0') + ":" + String(sekarang.getSeconds()).padStart(2, '0');
-            document.getElementById("txtTanggal").innerText = sekarang.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("lblNama").innerText = currentNama;
+        document.getElementById("lblNIM").innerText = "NIM: " + currentNIM;
+        
+        // Tampilkan tombol udzur jika murid perempuan (P)
+        if (currentJK.toUpperCase() === "P") {
+            document.getElementById("areaUdzur").classList.remove("d-none");
         }
-        setInterval(perbaruiJamDanTanggal, 1000);
 
-        window.addEventListener('DOMContentLoaded', () => {
-            perbaruiJamDanTanggal();
-            const sessionRaw = localStorage.getItem("siswa_login");
+        // Set Label Tanggal Realtime Indonesia
+        const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("lblHariIni").innerText = new Date().toLocaleDateString('id-ID', opsi);
+
+        renderCardSholat();
+    });
+
+    function renderCardSholat() {
+        const container = document.getElementById("containerSholat");
+        container.innerHTML = "";
+        
+        const d = new Date();
+        const tglHariIni = d.getDate();
+
+        Object.keys(masterJadwal).forEach(k => {
+            const j = masterJadwal[k];
+            const kuncian = localStorage.getItem(`kunci_${k}_${tglHariIni}`);
             
-            if (!sessionRaw) {
-                window.location.href = "index.html";
-                return;
-            }
+            let htmlCard = `
+                <div class="col-12">
+                    <div class="card card-sholat p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-clock text-primary me-2"></i>Sholat ${j.nama}</h5>
+                            <span class="badge bg-dark opacity-50">${j.buka} - ${j.tutup}</span>
+                        </div>
+                        <div class="area-tombol mt-2 d-flex flex-wrap gap-2" id="box-${k}">
+            `;
 
-            const dataMurid = JSON.parse(sessionRaw);
-            currentNIM = dataMurid.nim;
-            currentGender = dataMurid.gender.toUpperCase();
-
-            document.getElementById("lblNama").innerText = dataMurid.nama;
-            document.getElementById("lblNIM").innerText = currentNIM;
-            document.getElementById("lblKelas").innerText = dataMurid.kelas;
-            document.getElementById("badgeGender").innerText = currentGender === "P" ? "PEREMPUAN" : "LAKI-LAKI";
-            
-            if (currentGender === "P") {
-                document.getElementById("areaUdzur").style.display = "block";
-            }
-
-            bangunTabelSholatDinamis();
-        });
-
-        function bangunTabelSholatDinamis() {
-            const container = document.getElementById("containerSholat");
-            container.innerHTML = "";
-
-            Object.keys(masterJadwal).forEach(kode => {
-                const j = masterJadwal[kode];
-                const localStatus = localStorage.getItem(`status_${currentNIM}_${kode}_${getTanggalHariIni()}`);
-                
-                let areaAksiHtml = "";
-                let statusTeks = "Belum Diisi";
-                let statusWarna = "bg-secondary";
-
-                if (localStatus) {
-                    const parsed = JSON.parse(localStatus);
-                    statusTeks = parsed.teks;
-                    statusWarna = parsed.warnaBadge;
-                    areaAksiHtml = `<span class="badge badge-kunci"><i class="fa-solid fa-lock me-1"></i> Terkunci (${parsed.jam})</span>`;
+            if (kuncian) {
+                const info = JSON.parse(kuncian);
+                htmlCard += `
+                    <div class="w-100 alert alert-success py-2 px-3 mb-0 rounded-3 d-flex justify-content-between align-items-center">
+                        <span><i class="fa-solid fa-circle-check me-2"></i>Terlaporkan: <b>${info.status}</b></span>
+                        <span class="badge bg-secondary">${info.jam} WIB</span>
+                    </div>`;
+            } else {
+                if (currentJK.toUpperCase() === "L") {
+                    htmlCard += `
+                        <button onclick="prosesKlaim('${k}', 'BERJAMAAH', 'primary')" class="btn btn-primary btn-status flex-grow-1"><i class="fa-solid fa-users me-1"></i>Berjamaah (20)</button>
+                        <button onclick="prosesKlaim('${k}', 'AWAL WAKTU', 'success')" class="btn btn-success btn-status flex-grow-1">Awal (15)</button>
+                    `;
                 } else {
-                    // Tombol Jamaah khusus untuk Laki-laki
-                    let tombolJamaahHtml = (currentGender === "L") ? `
-                        <div class="wrapper-btn-edukasi">
-                            <button class="btn btn-sm btn-sholat btn-jamaah" onclick="prosesKlaim('${kode}', 'BERJAMAAH', 'blue')">Jamaah</button>
-                            <span class="txt-info-jam">${j.awal.split(" - ")[0]}</span>
-                        </div>` : '';
-
-                    areaAksiHtml = `
-                        ${tombolJamaahHtml}
-                        <div class="wrapper-btn-edukasi">
-                            <button class="btn btn-sm btn-sholat btn-awal" onclick="prosesKlaim('${kode}', 'AWAL WAKTU', 'awal')">Awal</button>
-                            <span class="txt-info-jam">${j.awal}</span>
-                        </div>
-                        <div class="wrapper-btn-edukasi">
-                            <button class="btn btn-sm btn-sholat btn-tengah" onclick="prosesKlaim('${kode}', 'PERTENGAHAN', 'yellow')">Tengah</button>
-                            <span class="txt-info-jam">${j.tengah}</span>
-                        </div>
-                        <div class="wrapper-btn-edukasi">
-                            <button class="btn btn-sm btn-sholat btn-akhir" onclick="prosesKlaim('${kode}', 'AKHIR WAKTU', 'red')">Akhir</button>
-                            <span class="txt-info-jam">${j.akhir}</span>
-                        </div>
+                    // Murid Perempuan tidak ada tombol biru berjamaah, melainkan awal waktu langsung 20 poin
+                    htmlCard += `
+                        <button onclick="prosesKlaim('${k}', 'AWAL WAKTU', 'success')" class="btn btn-success btn-status flex-grow-1"><i class="fa-solid fa-star me-1"></i>Awal Waktu (20)</button>
                     `;
                 }
-
-                container.innerHTML += `
-                    <div class="row align-items-center py-3 g-3 sholat-row">
-                        <div class="col-4 col-md-2">
-                            <div class="text-muted small fw-semibold">SHOLAT</div>
-                            <div class="sholat-name"><i class="fa-solid ${j.ikon} me-1"></i> ${j.nama}</div>
-                        </div>
-                        <div class="col-4 col-md-2">
-                            <div class="text-muted small fw-semibold">JADWAL</div>
-                            <div class="fw-semibold text-dark">${j.buka} WIB</div>
-                        </div>
-                        <div class="col-4 col-md-2 text-md-center">
-                            <div class="text-muted small fw-semibold mb-1">STATUS</div>
-                            <span class="badge status-pill ${statusWarna}">${statusTeks}</span>
-                        </div>
-                        <div class="col-12 col-md-6 text-md-end">${areaAksiHtml}</div>
-                    </div>
+                // Tombol Pertengahan dan Akhir Berlaku Universal
+                htmlCard += `
+                    <button onclick="prosesKlaim('${k}', 'PERTENGAHAN', 'warning')" class="btn btn-warning btn-status flex-grow-1 text-dark">Tengah (10)</button>
+                    <button onclick="prosesKlaim('${k}', 'AKHIR WAKTU', 'danger')" class="btn btn-danger btn-status flex-grow-1">Akhir (5)</button>
                 `;
-            });
+            }
+
+            htmlCard += `</div></div></div>`;
+            container.innerHTML += htmlCard;
+        });
+    }
+
+    function prosesKlaim(kodeSholat, tipeKlaim, payloadWarna) {
+        const sekarang = new Date();
+        const jamSekarangMenit = String(sekarang.getHours()).padStart(2, '0') + ":" + String(sekarang.getMinutes()).padStart(2, '0');
+        const j = masterJadwal[kodeSholat];
+
+        if (jamSekarangMenit < j.buka) {
+            alert(`Belum masuk waktu untuk lapor sholat ${j.nama} nak..`);
+            return;
+        }
+        if (jamSekarangMenit > j.tutup) {
+            alert(`Waktu pelaporan sholat ${j.nama} hari ini sudah habis/ditutup nak..`);
+            return;
         }
 
-        function prosesKlaim(kodeSholat, tipeKlaim, payloadWarna) {
-            const sekarang = new Date();
-            const jamSekarangMenit = String(sekarang.getHours()).padStart(2, '0') + ":" + String(sekarang.getMinutes()).padStart(2, '0');
-            const j = masterJadwal[kodeSholat];
+        if (!confirm(`Apakah kamu yakin melapor sholat ${tipeKlaim}? Data yang dikunci tidak bisa diubah!`)) return;
 
-            // VALIDASI ANTI-CURANG: Klik sebelum waktunya tiba
-            if (jamSekarangMenit < j.buka) {
-                alert(`Belum masuk waktu ${j.nama} nak..`);
-                return;
+        var myModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+        myModal.show();
+
+        fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({ 
+                action: "simpan_sholat", 
+                nim: currentNIM, 
+                sholat: kodeSholat, 
+                jam: jamSekarangMenit,
+                kategori: tipeKlaim 
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            myModal.hide();
+            if(data.success) {
+                kunciLokal(kodeSholat, tipeKlaim, jamSekarangMenit, payloadWarna);
+            } else {
+                alert("Gagal menyimpan ke server: " + data.message);
             }
-            // VALIDASI WAKTU SHOLAT LEWAT/KADALUARSA
-            if (jamSekarangMenit > j.tutup) {
-                alert(`Waktu untuk sholat ${j.nama} sudah habis nak..`);
-                return;
-            }
+        })
+        .catch(err => {
+            myModal.hide();
+            kunciLokal(kodeSholat, tipeKlaim, jamSekarangMenit, payloadWarna);
+        });
+    }
 
-            if (!confirm(`Apakah kamu yakin melapor sholat ${tipeKlaim}? Data yang dikunci tidak bisa diubah!`)) return;
-
-            var loader = new bootstrap.Modal(document.getElementById('loadingModal'));
-            loader.show();
-
-            fetch(API_URL, {
+    function klaimUdzurSyari() {
+        if (!confirm("Apakah kamu yakin sedang halangan (Udzur Syar'i)? Seluruh 5 waktu sholat hari ini akan terisi otomatis dengan warna abu-abu.")) return;
+        
+        var myModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+        myModal.show();
+        
+        const sekarang = new Date();
+        const jamSekarangMenit = String(sekarang.getHours()).padStart(2, '0') + ":" + String(sekarang.getMinutes()).padStart(2, '0');
+        const listSholat = ["S", "Z", "A", "M", "I"];
+        
+        let promises = listSholat.map(k => {
+            return fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "simpan_sholat", nim: currentNIM, sholat: kodeSholat, jam: jamSekarangMenit, warna: payloadWarna })
-            })
-            .then(res => res.json())
-            .then(data => {
-                loader.hide();
-                kunciLokal(kodeSholat, tipeKlaim, jamSekarangMenit, payloadWarna);
-            })
-            .catch(err => {
-                loader.hide();
-                kunciLokal(kodeSholat, tipeKlaim, jamSekarangMenit, payloadWarna);
+                body: JSON.stringify({ 
+                    action: "simpan_sholat", 
+                    nim: currentNIM, 
+                    sholat: k, 
+                    jam: jamSekarangMenit, 
+                    kategori: "UDZUR SYAR'I" 
+                })
+            }).then(res => res.json());
+        });
+        
+        Promise.all(promises)
+        .then(results => {
+            myModal.hide();
+            const tglHariIni = sekarang.getDate();
+            listSholat.forEach(k => {
+                localStorage.setItem(`kunci_${k}_${tglHariIni}`, JSON.stringify({ status: "UDZUR SYAR'I", jam: "UDZUR", warna: "secondary" }));
             });
-        }
+            alert("Status Udzur Syar'i sukses disimpan di server!");
+            renderCardSholat();
+        })
+        .catch(err => {
+            myModal.hide();
+            alert("Koneksi gagal saat mengirim data Udzur.");
+        });
+    }
 
-        function kunciLokal(kodeSholat, tipeKlaim, jamKlik, warna) {
-            let warnaBadge = "bg-success";
-            if(warna === "blue") warnaBadge = "bg-primary";
-            if(warna === "yellow") warnaBadge = "bg-warning text-dark";
-            if(warna === "red") warnaBadge = "bg-danger";
-
-            localStorage.setItem(`status_${currentNIM}_${kodeSholat}_${getTanggalHariIni()}`, JSON.stringify({ teks: tipeKlaim, jam: jamKlik, warnaBadge: warnaBadge }));
-            bangunTabelSholatDinamis();
-            alert("Laporan dikirim dan berhasil diproses!");
-        }
-
-        function klaimUdzurSyari() {
-            if (!confirm("Apakah kamu benar sedang berhalangan hari ini? Seluruh fardhu hari ini akan dikunci otomatis.")) return;
-            var loader = new bootstrap.Modal(document.getElementById('loadingModal'));
-            loader.show();
-
-            const kodes = ["S", "Z", "A", "M", "I"];
-            let berhasil = 0;
-
-            kodes.forEach(k => {
-                fetch(API_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ action: "simpan_sholat", nim: currentNIM, sholat: k, jam: "UDZUR", warna: "abu" })
-                }).finally(() => {
-                    localStorage.setItem(`status_${currentNIM}_${k}_${getTanggalHariIni()}`, JSON.stringify({ teks: "UDZUR SYAR'I", jam: "--:--", warnaBadge: "bg-secondary" }));
-                    berhasil++;
-                    if(berhasil === 5) {
-                        loader.hide();
-                        bangunTabelSholatDinamis();
-                        alert("Status Udzur Syar'i berhasil disimpan!");
-                    }
-                });
-            });
-        }
-
-        function getTanggalHariIni() {
-            const d = new Date();
-            return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
-        }
-
-        function logout() {
-            if(confirm("Apakah anda ingin keluar?")) {
-                localStorage.removeItem("siswa_login");
-                window.location.href = "index.html";
-            }
-        }
-    </script>
+    function kunciLokal(kodeSholat, tipeKlaim, jamKlik, warna) {
+        const tglHariIni = new Date().getDate();
+        localStorage.setItem(`kunci_${kodeSholat}_${tglHariIni}`, JSON.stringify({ status: tipeKlaim, jam: jamKlik, warna: warna }));
+        renderCardSholat();
+    }
+</script>
 </body>
 </html>
