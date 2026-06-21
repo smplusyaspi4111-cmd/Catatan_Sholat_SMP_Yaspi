@@ -8,11 +8,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar-jurnal { background-color: #1a252f; color: white; padding: 12px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .navbar-jurnal { background-color: #0b6623; color: white; padding: 12px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .card-sholat { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: white; margin-bottom: 20px; transition: transform 0.2s; }
         .card-sholat:hover { transform: translateY(-3px); }
         .btn-status { border-radius: 20px; font-weight: 600; font-size: 0.85rem; padding: 8px 15px; }
-        .header-profile { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border-radius: 0 0 25px 25px; padding: 25px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); position: relative; }
+        .header-profile { background: linear-gradient(135deg, #0b6623, #053b11); color: white; border-radius: 0 0 25px 25px; padding: 25px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); position: relative; }
         .badge-gender { position: absolute; top: 15px; right: 15px; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; }
     </style>
 </head>
@@ -29,8 +29,8 @@
 </div>
 
 <script>
-    // LINK WEB APP DEPLOYMENT GOOGLE APPS SCRIPT BAPAK FUADY
-    const API_URL = "https://script.google.com/macros/s/AKfycbxeM42GjGTdvJj9R0IG2dHtTIzT1e85BVWfUMmfVmJp2OdE9N_5Y5XdNGzzjTTk38xj/exec";
+    // URL WEB APP USER (Sama dengan URL Deployment di index.html bapak)
+    const API_URL = "https://script.google.com/macros/s/AKfycbxb03McgYYM0ugUkAGETJQeksycBmX0QzCfHhnqFgHLwKNcUjyvM3r2D_KH7Aj4JEzR/exec";
 
     // Jam Batas Toleransi Pelaporan Sholat Fardhu
     const masterJadwal = {
@@ -41,21 +41,29 @@
         "I": { nama: "Isya", buka: "19:30", tutup: "23:59" }
     };
 
-    // Membaca data login murid dari segala kemungkinan variabel lokal (Fallback System)
-    let currentNIM = localStorage.getItem("nim_murid") || localStorage.getItem("nim") || localStorage.getItem("login_nim") || "2001";
-    let currentNama = localStorage.getItem("nama_murid") || localStorage.getItem("nama") || localStorage.getItem("login_nama") || "ALIF FIRMANSYAH";
-    let currentJK = localStorage.getItem("jk_murid") || localStorage.getItem("jk") || localStorage.getItem("gender") || "L";
+    // ==========================================
+    // SINKRONISASI TOTAL DENGAN FORMAT INDEX.HTML
+    // ==========================================
+    let currentNama = "ALIF FIRMANSYAH";
+    let currentNIM = "2001";
+    let currentJK = "L";
+    let currentKelas = "";
 
-    try {
-        const userObj = localStorage.getItem("activeUser") || localStorage.getItem("currentUser") || localStorage.getItem("user");
-        if (userObj) {
-            const parsed = JSON.parse(userObj);
-            if(parsed.nim || parsed.nim_murid) currentNIM = parsed.nim || parsed.nim_murid;
-            if(parsed.nama || parsed.nama_murid) currentNama = parsed.nama || parsed.nama_murid;
-            if(parsed.jk || parsed.jk_murid || parsed.gender) currentJK = parsed.jk || parsed.jk_murid || parsed.gender;
+    // Ambil object 'siswa_login' dari localStorage sesuai buatan di file index bapak
+    const sesiLokal = localStorage.getItem("siswa_login");
+    if (sesiLokal) {
+        try {
+            const dataSiswa = JSON.parse(sesiLokal);
+            currentNama = dataSiswa.nama || currentNama;
+            currentNIM = dataSiswa.nim || currentNIM;
+            currentJK = dataSiswa.gender || currentJK; // di index bapak disave sebagai 'gender'
+            currentKelas = dataSiswa.kelas || currentKelas;
+        } catch(e) {
+            console.log("Gagal membaca objek login.");
         }
-    } catch(e) {
-        console.log("Menggunakan plain text session.");
+    } else {
+        // Jika murid nakal langsung tembak url sholat.html tanpa login, tendang balik ke index.html
+        window.location.href = "index.html";
     }
 </script>
 
@@ -91,7 +99,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Tempel Data Identitas Murid ke Elemen HTML
         document.getElementById("lblNama").innerText = currentNama;
-        document.getElementById("lblNIM").innerText = "NIM: " + currentNIM;
+        document.getElementById("lblNIM").innerText = "NIM: " + currentNIM + " (" + currentKelas + ")";
         
         // Deteksi Jenis Kelamin Murid untuk label profil & fitur tombol
         let jkCheck = currentJK.toString().toUpperCase();
@@ -109,21 +117,13 @@
         renderCardSholat();
     });
 
-    // FUNGSI UTAMA LOGOUT UNTUK MEMBERSIHKAN INTEGRASI SESSION LOGIN
+    // FUNGSI UTAMA LOGOUT UNTUK MEMBERSIHKAN INTEGRASI SAKRAL INDEX.HTML
     function logoutMurid() {
         if (confirm("Apakah kamu yakin ingin keluar dari aplikasi Jurnal Sholat ini?")) {
-            // Hapus semua log identitas agar tidak bentrok saat murid lain masuk
-            localStorage.removeItem("nim_murid");
-            localStorage.removeItem("nama_murid");
-            localStorage.removeItem("jk_murid");
-            localStorage.removeItem("nim");
-            localStorage.removeItem("nama");
-            localStorage.removeItem("jk");
-            localStorage.removeItem("activeUser");
-            localStorage.removeItem("currentUser");
-            localStorage.removeItem("user");
+            // Hapus session kunci utama sesuai instruksi index bapak
+            localStorage.removeItem("siswa_login");
             
-            // Alihkan kembali ke halaman portal login utama bapak (index.html atau sesuaikan jalurnya)
+            // Alihkan kembali ke halaman utama portal login bapak
             window.location.href = "index.html"; 
         }
     }
@@ -143,7 +143,7 @@
                 <div class="col-12">
                     <div class="card card-sholat p-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-clock text-primary me-2"></i>Sholat ${j.nama}</h5>
+                            <h5 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-clock text-success me-2"></i>Sholat ${j.nama}</h5>
                             <span class="badge bg-dark opacity-50">${j.buka} - ${j.tutup}</span>
                         </div>
                         <div class="area-tombol mt-2 d-flex flex-wrap gap-2" id="box-${k}">
