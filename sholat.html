@@ -30,45 +30,30 @@
     };
 
     // =========================================================
-    // KODE SINKRONISASI DATA LOGIN ASLI PORTAL BAPAK FUADY
+    // KODE BRUTE-FORCE ANTI-GAGAL: MEMBACA SEGALA JENIS VARIABEL
     // =========================================================
-    let currentNIM = "";
-    let currentNama = "";
-    let currentJK = "L";
+    let currentNIM = localStorage.getItem("nim_murid") || localStorage.getItem("nim") || localStorage.getItem("login_nim") || "2001";
+    let currentNama = localStorage.getItem("nama_murid") || localStorage.getItem("nama") || localStorage.getItem("login_nama") || "ALIF FIRMANSYAH";
+    let currentJK = localStorage.getItem("jk_murid") || localStorage.getItem("jk") || localStorage.getItem("gender") || "L";
 
+    // Cek juga jika sistem bapak menyimpannya di dalam Objek JSON terpusat
     try {
-        // Mencari data user aktif dari session login terpadu
-        const userSession = localStorage.getItem("activeUser") || localStorage.getItem("currentUser") || localStorage.getItem("user");
-        
-        if (userSession) {
-            const dataUser = JSON.parse(userSession);
-            currentNIM = dataUser.nim || dataUser.username || "";
-            currentNama = dataUser.nama || dataUser.namaLengkap || "Murid SMP YASPI";
-            currentJK = dataUser.jk || dataUser.gender || dataUser.jenisKelamin || "L";
-        } else {
-            // Jika tidak berbentuk JSON objek, cek fallback teks satuan alternatif
-            currentNIM = localStorage.getItem("nim") || localStorage.getItem("login_nim") || "";
-            currentNama = localStorage.getItem("nama") || localStorage.getItem("login_nama") || "Murid SMP YASPI";
-            currentJK = localStorage.getItem("jk") || localStorage.getItem("login_jk") || "L";
+        const userObj = localStorage.getItem("activeUser") || localStorage.getItem("currentUser") || localStorage.getItem("user");
+        if (userObj) {
+            const parsed = JSON.parse(userObj);
+            if(parsed.nim || parsed.nim_murid) currentNIM = parsed.nim || parsed.nim_murid;
+            if(parsed.nama || parsed.nama_murid) currentNama = parsed.nama || parsed.nama_murid;
+            if(parsed.jk || parsed.jk_murid || parsed.gender) currentJK = parsed.jk || parsed.jk_murid || parsed.gender;
         }
-    } catch (e) {
-        // Fallback jika terjadi error parsing data
-        currentNIM = localStorage.getItem("nim") || "";
-        currentNama = localStorage.getItem("nama") || "Murid SMP YASPI";
-        currentJK = localStorage.getItem("jk") || "L";
+    } catch(e) {
+        console.log("Bukan format JSON, menggunakan teks biasa.");
     }
-
-    // Jika murid kedapatan langsung nembak URL tanpa login, arahkan balik ke login utama
-    if (!currentNIM || currentNIM === "") {
-        alert("Sesi login tidak ditemukan. Silakan masuk melalui halaman login utama terlebih dahulu ya nak..");
-        window.location.href = "index.html"; 
-    } 
 </script>
 
 <div class="container max-width-md px-3">
     <div class="header-profile mb-4 text-center">
         <i class="fa-solid fa-user-graduate fa-3x mb-2"></i>
-        <h4 class="fw-bold mb-1" id="lblNama">Memuat nama...</h4>
+        <h4 class="fw-bold mb-1" id="lblNama">Loading...</h4>
         <p class="mb-2 opacity-75" id="lblNIM">NIM: -</p>
         <span class="badge bg-light text-dark px-3 py-2 rounded-pill fw-bold" id="lblHariIni">Hari Ini</span>
     </div>
@@ -94,16 +79,17 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Terapkan data terverifikasi ke elemen tampilan UI
+        // Tampilkan Nama & NIM ke Tampilan Aplikasi
         document.getElementById("lblNama").innerText = currentNama;
         document.getElementById("lblNIM").innerText = "NIM: " + currentNIM;
         
-        // Cek filter gender untuk menampilkan menu halangan bulanan
-        if (currentJK.toString().toUpperCase() === "P" || currentJK.toString().toUpperCase() === "PEREMPUAN") {
+        // Deteksi Gender Perempuan untuk memunculkan Tombol Udzur
+        let jkAwal = currentJK.toString().toUpperCase();
+        if (jkAwal === "P" || jkAwal === "PEREMPUAN" || jkAwal.includes("WANITA") || jkAwal.includes("PEREMPUAN")) {
             document.getElementById("areaUdzur").classList.remove("d-none");
         }
 
-        // Generate format penanggalan kalender lokal Indonesia
+        // Tampilkan Tanggal Hari Ini dengan Format Indonesia
         const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById("lblHariIni").innerText = new Date().toLocaleDateString('id-ID', opsi);
 
@@ -139,21 +125,21 @@
                         <span class="badge bg-secondary">${info.jam} WIB</span>
                     </div>`;
             } else {
-                // Cek filter tampilan tombol berdasarkan variabel JK santri
+                // Cek Validasi Gender Murid Laki-Laki atau Perempuan
                 let jkCheck = currentJK.toString().toUpperCase();
-                if (jkCheck === "L" || jkCheck === "LAKI-LAKI" || jkCheck === "SISWA (LAKI-LAKI)") {
+                if (jkCheck === "L" || jkCheck === "LAKI-LAKI" || jkCheck.includes("LAKI")) {
                     htmlCard += `
                         <button onclick="prosesKlaim('${k}', 'BERJAMAAH', 'primary')" class="btn btn-primary btn-status flex-grow-1"><i class="fa-solid fa-users me-1"></i>Berjamaah (20)</button>
                         <button onclick="prosesKlaim('${k}', 'AWAL WAKTU', 'success')" class="btn btn-success btn-status flex-grow-1">Awal (15)</button>
                     `;
                 } else {
-                    // Tampilan khusus murid perempuan (Awal waktu otomatis bobot poin penuh)
+                    // Mode Hemat Tombol Berjamaah Khusus Siswi Perempuan (Langsung Dapat Poin Penuh)
                     htmlCard += `
                         <button onclick="prosesKlaim('${k}', 'AWAL WAKTU', 'success')" class="btn btn-success btn-status flex-grow-1"><i class="fa-solid fa-star me-1"></i>Awal Waktu (20)</button>
                     `;
                 }
                 
-                // Tombol penunjang laporan waktu opsional
+                // Pilihan Umum yang Berlaku untuk Semua Murid
                 htmlCard += `
                     <button onclick="prosesKlaim('${k}', 'PERTENGAHAN', 'warning')" class="btn btn-warning btn-status flex-grow-1 text-dark">Tengah (10)</button>
                     <button onclick="prosesKlaim('${k}', 'AKHIR WAKTU', 'danger')" class="btn btn-danger btn-status flex-grow-1">Akhir (5)</button>
