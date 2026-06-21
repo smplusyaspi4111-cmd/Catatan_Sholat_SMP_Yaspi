@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Digital Terpadu | SMP Yaspi Medan</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
@@ -22,7 +22,6 @@
             color: var(--dark-color);
         }
 
-        /* Header Style */
         .hero-section {
             background: linear-gradient(135deg, var(--primary-color) 0%, #053b11 100%);
             color: white;
@@ -45,7 +44,6 @@
             margin: 0 auto 15px auto;
         }
 
-        /* Menu Card Style */
         .menu-card {
             background: white;
             border: none;
@@ -73,7 +71,6 @@
             margin-bottom: 20px;
         }
 
-        /* Badge Status */
         .badge-ready {
             background-color: rgba(11, 102, 35, 0.1);
             color: var(--primary-color);
@@ -89,6 +86,7 @@
             border-radius: 10px;
             font-weight: 600;
             transition: 0.2s;
+            border: none;
         }
         .btn-akses:hover {
             background-color: #053b11;
@@ -112,7 +110,7 @@
             <h1 class="fw-bold mb-1">SMP YASPI MEDAN</h1>
             <p class="text-white-50 fs-5 mb-3">Arah Baru: Unggul dalam Tahfiz, Terdepan dalam Teknologi</p>
             <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
-                <i class="fa-solid fa-circle-check me-1"></i> PORTAL DIGITAL TERPADU (JANUARI 2025)
+                <i class="fa-solid fa-circle-check me-1"></i> PORTAL DIGITAL TERPADU (UNI-SISTEM 2026)
             </span>
         </div>
     </div>
@@ -125,40 +123,30 @@
 
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
-                <div class="card menu-card p-4">
-                    <div class="icon-box bg-success text-success bg-opacity-10 text-primary">
-                        <i class="fa-solid fa-heart-pulse text-success"></i>
+                <div class="card menu-card p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="icon-box bg-success text-success bg-opacity-10">
+                            <i class="fa-solid fa-star-and-crecent text-success"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Catatan Sholat Siswa</h5>
+                        <p class="text-muted small">Aplikasi pemantauan ibadah sholat harian mandiri untuk seluruh siswa SMP Yaspi.</p>
                     </div>
-                    <h5 class="fw-bold mb-2">Catatan Sholat Siswa</h5>
-                    <p class="text-muted small flex-grow-1">Aplikasi pemantauan ibadah sholat harian mandiri untuk seluruh siswa SMP Yaspi.</p>
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="badge badge-ready px-2.5 py-1.5 rounded">Siap Bangun</span>
-                        <a href="sholat.html" class="btn btn-sm btn-akses px-3">Buka <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                        <span class="badge badge-ready px-2.5 py-1.5 rounded">Aktif</span>
+                        <button class="btn btn-sm btn-akses px-3" data-bs-toggle="modal" data-bs-target="#loginModal">Buka <i class="fa-solid fa-arrow-right ms-1"></i></button>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
-                <div class="card menu-card p-4">
-                    <div class="icon-box bg-warning text-warning bg-opacity-10">
-                        <i class="fa-solid fa-book-quran"></i>
+                <div class="card menu-card p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="icon-box bg-warning text-warning bg-opacity-10">
+                            <i class="fa-solid fa-book-quran"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Jurnal Tahfiz</h5>
+                        <p class="text-muted small">Sistem pencatatan hafalan ayat dan setoran hafalan Al-Qur'an secara real-time.</p>
                     </div>
-                    <h5 class="fw-bold mb-2">Jurnal Tahfiz</h5>
-                    <p class="text-muted small flex-grow-1">Sistem pencatatan hafalan ayat dan setoran hafalan Al-Qur'an secara real-time.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="badge badge-dev px-2.5 py-1.5 rounded">Rencana</span>
-                        <button class="btn btn-sm btn-secondary disabled opacity-50 px-3">Kunci</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3">
-                <div class="card menu-card p-4">
-                    <div class="icon-box bg-info text-info bg-opacity-10">
-                        <i class="fa-solid fa-microchip"></i>
-                    </div>
-                    <h5 class="fw-bold mb-2">Laboratorium Arduino</h5>
-                    <p class="text-muted small flex-grow-1">Wadah siswa untuk mengunggah laporan penelitian sederhana berbasis teknologi robotika DIY.</p>
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <span class="badge badge-dev px-2.5 py-1.5 rounded">Rencana</span>
                         <button class="btn btn-sm btn-secondary disabled opacity-50 px-3">Kunci</button>
@@ -167,12 +155,30 @@
             </div>
 
             <div class="col-md-6 col-lg-3">
-                <div class="card menu-card p-4">
-                    <div class="icon-box bg-danger text-danger bg-opacity-10">
-                        <i class="fa-solid fa-wallet"></i>
+                <div class="card menu-card p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="icon-box bg-info text-info bg-opacity-10">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Laboratorium Arduino</h5>
+                        <p class="text-muted small">Wadah siswa untuk mengunggah laporan penelitian sederhana berbasis teknologi robotika DIY.</p>
                     </div>
-                    <h5 class="fw-bold mb-2">Sistem SPP & Absensi</h5>
-                    <p class="text-muted small flex-grow-1">Portal administrasi guru untuk absensi harian dan pembayaran SPP digital yang sudah berjalan.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge badge-dev px-2.5 py-1.5 rounded">Rencana</span>
+                        <button class="btn btn-sm btn-secondary disabled opacity-50 px-3">Kunci</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card menu-card p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="icon-box bg-danger text-danger bg-opacity-10">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Sistem SPP & Absensi</h5>
+                        <p class="text-muted small">Portal administrasi guru untuk absensi harian dan pembayaran SPP digital yang sudah berjalan.</p>
+                    </div>
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <span class="badge badge-ready px-2.5 py-1.5 rounded">Integrasi</span>
                         <a href="#" class="btn btn-sm btn-akses px-3">Akses <i class="fa-solid fa-arrow-right ms-1"></i></a>
@@ -191,12 +197,78 @@
         </div>
     </div>
 
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h6 class="modal-title fw-bold" id="loginModalLabel"><i class="fa-solid fa-user-lock me-2"></i>Identitas Siswa</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-shadow="none" data-bs-custom="close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formMasukPortal" onsubmit="tanganiLoginSiswa(event)">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nama Lengkap Murid</label>
+                            <input type="text" id="inNama" class="form-control form-control-sm" placeholder="Contoh: Ahmad Fauzi" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nomor Induk / NIM</label>
+                            <input type="number" id="inNIM" class="form-control form-control-sm" placeholder="Contoh: 2025001" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Kelas</label>
+                            <select id="inKelas" class="form-select form-select-sm" required>
+                                <option value="7-1">Kelas 7-1</option>
+                                <option value="7-2">Kelas 7-2</option>
+                                <option value="8-1">Kelas 8-1</option>
+                                <option value="9-1">Kelas 9-1</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Jenis Kelamin</label>
+                            <select id="inGender" class="form-select form-select-sm" required>
+                                <option value="L">Laki-Laki (Siswa)</option>
+                                <option value="P">Perempuan (Siswi)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-success w-100 fw-bold py-2 rounded-3">Masuk Aplikasi <i class="fa-solid fa-sign-in-alt ms-1"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="text-center pb-4">
         <div class="container">
             <p class="mb-0">&copy; 2026 SMP Yaspi Medan. Didesain secara digital bersama Tim VM.</p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function tanganiLoginSiswa(event) {
+            event.preventDefault(); // Cegah reload halaman
+
+            // Ambil data masukan form
+            const namaSiswa = document.getElementById("inNama").value;
+            const nimSiswa = document.getElementById("inNIM").value;
+            const kelasSiswa = document.getElementById("inKelas").value;
+            const genderSiswa = document.getElementById("inGender").value;
+
+            // Satukan menjadi paket objek data login siswa
+            const dataPaketSiswa = {
+                nama: namaSiswa,
+                nim: nimSiswa,
+                kelas: kelasSiswa,
+                gender: genderSiswa
+            };
+
+            // SIMPAN KE LOCALSTORAGE (Ini jembatan wajib agar sholat.html tidak mati kutu)
+            localStorage.setItem("siswa_login", JSON.stringify(dataPaketSiswa));
+
+            // Teruskan lompat ke halaman jurnal sholat
+            window.location.href = "sholat.html";
+        }
+    </script>
 </body>
 </html>
