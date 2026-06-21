@@ -29,22 +29,46 @@
         "I": { nama: "Isya", buka: "19:30", tutup: "23:59" }
     };
 
-    // KODE PERBAIKAN: Mengambil data asli dari session/local storage login awal Bapak
-    let currentNIM = localStorage.getItem("nim") || localStorage.getItem("login_nim") || ""; 
-    let currentNama = localStorage.getItem("nama") || localStorage.getItem("login_nama") || "Murid";
-    let currentJK = localStorage.getItem("jk") || localStorage.getItem("login_jk") || localStorage.getItem("gender") || "L"; 
+    // =========================================================
+    // KODE SINKRONISASI DATA LOGIN ASLI PORTAL BAPAK FUADY
+    // =========================================================
+    let currentNIM = "";
+    let currentNama = "";
+    let currentJK = "L";
 
-    // Validasi Keamanan: Jika murid melompat ke halaman ini tanpa login, kembalikan ke index login
-    if (!currentNIM) {
-        alert("Sesi login habis atau belum login. Silakan login kembali nak..");
-        window.location.href = "index.html"; // Sesuaikan dengan nama file halaman login utama Bapak
+    try {
+        // Mencari data user aktif dari session login terpadu
+        const userSession = localStorage.getItem("activeUser") || localStorage.getItem("currentUser") || localStorage.getItem("user");
+        
+        if (userSession) {
+            const dataUser = JSON.parse(userSession);
+            currentNIM = dataUser.nim || dataUser.username || "";
+            currentNama = dataUser.nama || dataUser.namaLengkap || "Murid SMP YASPI";
+            currentJK = dataUser.jk || dataUser.gender || dataUser.jenisKelamin || "L";
+        } else {
+            // Jika tidak berbentuk JSON objek, cek fallback teks satuan alternatif
+            currentNIM = localStorage.getItem("nim") || localStorage.getItem("login_nim") || "";
+            currentNama = localStorage.getItem("nama") || localStorage.getItem("login_nama") || "Murid SMP YASPI";
+            currentJK = localStorage.getItem("jk") || localStorage.getItem("login_jk") || "L";
+        }
+    } catch (e) {
+        // Fallback jika terjadi error parsing data
+        currentNIM = localStorage.getItem("nim") || "";
+        currentNama = localStorage.getItem("nama") || "Murid SMP YASPI";
+        currentJK = localStorage.getItem("jk") || "L";
+    }
+
+    // Jika murid kedapatan langsung nembak URL tanpa login, arahkan balik ke login utama
+    if (!currentNIM || currentNIM === "") {
+        alert("Sesi login tidak ditemukan. Silakan masuk melalui halaman login utama terlebih dahulu ya nak..");
+        window.location.href = "index.html"; 
     } 
 </script>
 
 <div class="container max-width-md px-3">
     <div class="header-profile mb-4 text-center">
         <i class="fa-solid fa-user-graduate fa-3x mb-2"></i>
-        <h4 class="fw-bold mb-1" id="lblNama">Loading...</h4>
+        <h4 class="fw-bold mb-1" id="lblNama">Memuat nama...</h4>
         <p class="mb-2 opacity-75" id="lblNIM">NIM: -</p>
         <span class="badge bg-light text-dark px-3 py-2 rounded-pill fw-bold" id="lblHariIni">Hari Ini</span>
     </div>
@@ -55,8 +79,7 @@
         </button>
     </div>
 
-    <div class="row" id="containerSholat">
-        </div>
+    <div class="row" id="containerSholat"></div>
 </div>
 
 <div class="modal fade" id="loadingModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
@@ -71,15 +94,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Terapkan data terverifikasi ke elemen tampilan UI
         document.getElementById("lblNama").innerText = currentNama;
         document.getElementById("lblNIM").innerText = "NIM: " + currentNIM;
         
-        // Tampilkan tombol udzur jika murid perempuan (P)
-        if (currentJK.toUpperCase() === "P") {
+        // Cek filter gender untuk menampilkan menu halangan bulanan
+        if (currentJK.toString().toUpperCase() === "P" || currentJK.toString().toUpperCase() === "PEREMPUAN") {
             document.getElementById("areaUdzur").classList.remove("d-none");
         }
 
-        // Set Label Tanggal Realtime Indonesia
+        // Generate format penanggalan kalender lokal Indonesia
         const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById("lblHariIni").innerText = new Date().toLocaleDateString('id-ID', opsi);
 
@@ -115,18 +139,21 @@
                         <span class="badge bg-secondary">${info.jam} WIB</span>
                     </div>`;
             } else {
-                if (currentJK.toUpperCase() === "L") {
+                // Cek filter tampilan tombol berdasarkan variabel JK santri
+                let jkCheck = currentJK.toString().toUpperCase();
+                if (jkCheck === "L" || jkCheck === "LAKI-LAKI" || jkCheck === "SISWA (LAKI-LAKI)") {
                     htmlCard += `
                         <button onclick="prosesKlaim('${k}', 'BERJAMAAH', 'primary')" class="btn btn-primary btn-status flex-grow-1"><i class="fa-solid fa-users me-1"></i>Berjamaah (20)</button>
                         <button onclick="prosesKlaim('${k}', 'AWAL WAKTU', 'success')" class="btn btn-success btn-status flex-grow-1">Awal (15)</button>
                     `;
                 } else {
-                    // Murid Perempuan tidak ada tombol biru berjamaah, melainkan awal waktu langsung 20 poin
+                    // Tampilan khusus murid perempuan (Awal waktu otomatis bobot poin penuh)
                     htmlCard += `
                         <button onclick="prosesKlaim('${k}', 'AWAL WAKTU', 'success')" class="btn btn-success btn-status flex-grow-1"><i class="fa-solid fa-star me-1"></i>Awal Waktu (20)</button>
                     `;
                 }
-                // Tombol Pertengahan dan Akhir Berlaku Universal
+                
+                // Tombol penunjang laporan waktu opsional
                 htmlCard += `
                     <button onclick="prosesKlaim('${k}', 'PERTENGAHAN', 'warning')" class="btn btn-warning btn-status flex-grow-1 text-dark">Tengah (10)</button>
                     <button onclick="prosesKlaim('${k}', 'AKHIR WAKTU', 'danger')" class="btn btn-danger btn-status flex-grow-1">Akhir (5)</button>
