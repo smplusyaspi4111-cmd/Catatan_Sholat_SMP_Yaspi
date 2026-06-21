@@ -29,9 +29,16 @@
         "I": { nama: "Isya", buka: "19:30", tutup: "23:59" }
     };
 
-    let currentNIM = localStorage.getItem("login_nim") || "12345"; 
-    let currentNama = localStorage.getItem("login_nama") || "Murid SMP YASPI";
-    let currentJK = localStorage.getItem("login_jk") || "L"; 
+    // KODE PERBAIKAN: Mengambil data asli dari session/local storage login awal Bapak
+    let currentNIM = localStorage.getItem("nim") || localStorage.getItem("login_nim") || ""; 
+    let currentNama = localStorage.getItem("nama") || localStorage.getItem("login_nama") || "Murid";
+    let currentJK = localStorage.getItem("jk") || localStorage.getItem("login_jk") || localStorage.getItem("gender") || "L"; 
+
+    // Validasi Keamanan: Jika murid melompat ke halaman ini tanpa login, kembalikan ke index login
+    if (!currentNIM) {
+        alert("Sesi login habis atau belum login. Silakan login kembali nak..");
+        window.location.href = "index.html"; // Sesuaikan dengan nama file halaman login utama Bapak
+    } 
 </script>
 
 <div class="container max-width-md px-3">
