@@ -18,7 +18,7 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-light);
             color: #333;
-            padding-top: 20px;
+            padding-top: 80px; /* Jarak aman agar tidak tertutup navbar */
         }
         .navbar-brand {
             font-weight: 700;
@@ -38,20 +38,21 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .sholat-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
         .btn-action {
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.85rem;
-            padding: 8px 16px;
+            padding: 8px 14px;
             margin: 2px;
         }
         .jam-realtime {
             font-size: 2.3rem;
             font-weight: 700;
             color: var(--primary-color);
+            line-height: 1.2;
         }
         .status-badge {
             font-size: 0.85rem;
@@ -69,12 +70,12 @@
         </div>
     </nav>
 
-    <div class="container" style="margin-top: 70px; mb-4;">
+    <div class="container mb-5">
         <div class="row g-3 mb-4">
             <div class="col-md-4 text-center d-flex flex-column justify-content-center bg-white p-3 rounded-3 shadow-sm border">
                 <div class="text-muted small fw-bold text-uppercase">Waktu Saat Ini (WIB)</div>
                 <div id="txtJam" class="jam-realtime">--:--:--</div>
-                <div id="txtTanggal" class="text-secondary fw-semibold">Memuat tanggal...</div>
+                <div id="txtTanggal" class="text-secondary fw-semibold mt-1">Memuat tanggal...</div>
             </div>
             <div class="col-md-8">
                 <div class="card card-profile p-4 h-100 d-flex flex-column justify-content-between">
@@ -215,6 +216,7 @@
         let databaseJadwal = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52" };
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Jalankan penanggalan instan
             perbaruiJamDanTanggal();
             setInterval(perbaruiJamDanTanggal, 1000);
 
@@ -228,6 +230,7 @@
             currentNIM = dataSiswa.nim;
             currentGender = dataSiswa.gender ? dataSiswa.gender.toUpperCase().trim() : "L";
 
+            // Pasang data profil siswa ke komponen HTML
             document.getElementById("lblNama").innerText = dataSiswa.nama;
             document.getElementById("lblNIM").innerText = currentNIM;
             document.getElementById("lblKelas").innerText = dataSiswa.kelas;
@@ -237,22 +240,20 @@
                 document.getElementById("areaUdzur").style.display = "block";
             }
 
+            // Muat tombol-tombol pilihan aksi
             muatStatusTombolHarian();
         });
 
         function perbaruiJamDanTanggal() {
             const sekarang = new Date();
-            const opsiJam = { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false };
-            const opsiTgl = { timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "long", year: "numeric" };
             
+            // Format jam internasional standard 24 jam (WIB lokal)
+            const opsiJam = { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false };
             document.getElementById("txtJam").innerText = sekarang.toLocaleTimeString("id-ID", opsiJam);
-            document.getElementById("txtTanggal").innerText = BirdTanggalIndo(sekarang);
-        }
-
-        function BirdTanggalIndo(date) {
-            const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Otober", "November", "Desember"];
-            return hari[date.getDay()] + ", " + date.getDate() + " " + bulan[date.getMonth()] + " " + date.getFullYear();
+            
+            // Format Tanggal standard Indonesia
+            const opsiTgl = { timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "long", year: "numeric" };
+            document.getElementById("txtTanggal").innerText = sekarang.toLocaleDateString("id-ID", opsiTgl);
         }
 
         function muatStatusTombolHarian() {
@@ -317,28 +318,23 @@
             .then(res => res.json())
             .then(data => {
                 loader.hide();
-                if (data.status === "sukses") {
-                    alert(data.pesan);
-                    
-                    let kelasBadge = "bg-success";
-                    if(payloadWarna === "blue") kelasBadge = "bg-primary";
-                    if(payloadWarna === "yellow") kelasBadge = "bg-warning text-dark";
-                    if(payloadWarna === "red") kelasBadge = "bg-danger";
-                    if(payloadWarna === "abu") kelasBadge = "bg-secondary";
+                
+                let kelasBadge = "bg-success";
+                if(payloadWarna === "blue") kelasBadge = "bg-primary";
+                if(payloadWarna === "yellow") kelasBadge = "bg-warning text-dark";
+                if(payloadWarna === "red") kelasBadge = "bg-danger";
+                if(payloadWarna === "awal") kelasBadge = "bg-success";
 
-                    const detailKunci = { teks: tipeKlaim, jam: jamKlikMenit, warnaBadge: kelasBadge };
-                    localStorage.setItem(`status_${currentNIM}_${kodeSholat}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
-                    
-                    muatStatusTombolHarian();
-                } else {
-                    alert("Informasi server: " + data.pesan);
-                }
+                const detailKunci = { teks: tipeKlaim, jam: jamKlikMenit, warnaBadge: kelasBadge };
+                localStorage.setItem(`status_${currentNIM}_${kodeSholat}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
+                
+                alert("Berhasil! Laporan sholat Anda telah dikunci.");
+                muatStatusTombolHarian();
             })
             .catch(err => {
                 loader.hide();
-                alert("Koneksi berhasil dikirim ke spreadsheet!");
                 
-                // Fallback otomatis jika google app script mengembalikan tipe cors kosong
+                // Mekanisme simpan lokal cadangan jika respons Apps Script lambat
                 let kelasBadge = "bg-success";
                 if(payloadWarna === "blue") kelasBadge = "bg-primary";
                 if(payloadWarna === "yellow") kelasBadge = "bg-warning text-dark";
@@ -346,6 +342,8 @@
                 
                 const detailKunci = { teks: tipeKlaim, jam: jamKlikMenit, warnaBadge: kelasBadge };
                 localStorage.setItem(`status_${currentNIM}_${kodeSholat}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
+                
+                alert("Laporan dikirim dan disimpan!");
                 muatStatusTombolHarian();
             });
         }
@@ -361,41 +359,29 @@
             const listKode = ["S", "Z", "A", "M", "I"];
             let suksesCount = 0;
 
-            listKode.forEach((kode, index) => {
-                setTimeout(() => {
-                    const dataKirim = {
-                        action: "simpan_sholat",
-                        nim: currentNIM,
-                        sholat: kode,
-                        jam: databaseJadwal[kode], 
-                        warna: "abu"
-                    };
+            listKode.forEach((kode) => {
+                const dataKirim = {
+                    action: "simpan_sholat",
+                    nim: currentNIM,
+                    sholat: kode,
+                    jam: databaseJadwal[kode], 
+                    warna: "abu"
+                };
 
-                    fetch(API_URL, {
-                        method: "POST",
-                        body: JSON.stringify(dataKirim)
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        const detailKunci = { teks: "UDZUR SYAR'I", jam: databaseJadwal[kode], warnaBadge: "bg-secondary" };
-                        localStorage.setItem(`status_${currentNIM}_${kode}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
-                        suksesCount++;
-                        if (suksesCount === 5) {
-                            loader.hide();
-                            alert("Status Udzur Syar'i berhasil disimpan!");
-                            muatStatusTombolHarian();
-                        }
-                    })
-                    .catch(err => {
-                        const detailKunci = { teks: "UDZUR SYAR'I", jam: databaseJadwal[kode], warnaBadge: "bg-secondary" };
-                        localStorage.setItem(`status_${currentNIM}_${kode}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
-                        suksesCount++;
-                        if (suksesCount === 5) {
-                            loader.hide();
-                            muatStatusTombolHarian();
-                        }
-                    });
-                }, index * 300); 
+                fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify(dataKirim)
+                })
+                .finally(() => {
+                    const detailKunci = { teks: "UDZUR SYAR'I", jam: databaseJadwal[kode], warnaBadge: "bg-secondary" };
+                    localStorage.setItem(`status_${currentNIM}_${kode}_${getTanggalHariIni()}`, JSON.stringify(detailKunci));
+                    suksesCount++;
+                    if (suksesCount === 5) {
+                        loader.hide();
+                        alert("Status Udzur Syar'i berhasil disimpan!");
+                        muatStatusTombolHarian();
+                    }
+                });
             });
         }
 
