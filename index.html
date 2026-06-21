@@ -1,273 +1,753 @@
 <!DOCTYPE html>
+
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jurnal Sholat - SMP YASPI</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <title>Portal Digital Terpadu | SMP Yaspi Medan</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    
+
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar-jurnal { background-color: #0b6623; color: white; padding: 12px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .card-sholat { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: white; margin-bottom: 20px; transition: transform 0.2s; }
-        .card-sholat:hover { transform: translateY(-3px); }
-        .btn-status { border-radius: 20px; font-weight: 600; font-size: 0.85rem; padding: 8px 15px; }
-        .header-profile { background: linear-gradient(135deg, #0b6623, #053b11); color: white; border-radius: 0 0 25px 25px; padding: 25px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); position: relative; }
-        .badge-gender { position: absolute; top: 15px; right: 15px; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; }
+
+        :root {
+
+            --primary-color: #0b6623;
+
+            --secondary-color: #d4af37;
+
+            --dark-color: #1b262c;
+
+            --light-color: #f4f6f9;
+
+        }
+
+        body {
+
+            font-family: 'Poppins', sans-serif;
+
+            background-color: var(--light-color);
+
+            color: var(--dark-color);
+
+        }
+
+        .hero-section {
+
+            background: linear-gradient(135deg, var(--primary-color) 0%, #053b11 100%);
+
+            color: white;
+
+            padding: 50px 20px;
+
+            border-bottom-left-radius: 40px;
+
+            border-bottom-right-radius: 40px;
+
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+
+        }
+
+        .logo-placeholder {
+
+            width: 80px;
+
+            height: 80px;
+
+            background-color: rgba(255, 255, 255, 0.2);
+
+            border-radius: 50px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 2rem;
+
+            border: 2px solid var(--secondary-color);
+
+            margin: 0 auto 15px auto;
+
+        }
+
+        .menu-card {
+
+            background: white;
+
+            border: none;
+
+            border-radius: 20px;
+
+            transition: all 0.3s ease-in-out;
+
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+
+            overflow: hidden;
+
+            height: 100%;
+
+        }
+
+        .menu-card:hover {
+
+            transform: translateY(-10px);
+
+            box-shadow: 0 15px 30px rgba(11, 102, 35, 0.15);
+
+            border-bottom: 4px solid var(--secondary-color);
+
+        }
+
+        .icon-box {
+
+            width: 70px;
+
+            height: 70px;
+
+            border-radius: 15px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 1.8rem;
+
+            margin-bottom: 20px;
+
+        }
+
+        .badge-ready { background-color: rgba(11, 102, 35, 0.1); color: var(--primary-color); }
+
+        .badge-dev { background-color: rgba(212, 175, 55, 0.1); color: #b5901b; }
+
+        .btn-akses {
+
+            background-color: var(--primary-color);
+
+            color: white;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+
+            transition: 0.2s;
+
+            border: none;
+
+        }
+
+        .btn-akses:hover { background-color: #053b11; color: var(--secondary-color); }
+
+        footer { margin-top: 60px; color: #777; font-size: 0.9rem; }
+
     </style>
+
 </head>
+
 <body>
 
-<div class="navbar-jurnal d-flex justify-content-between align-items-center">
-    <div class="d-flex align-items-center gap-2">
-        <i class="fa-solid fa-mosque text-warning fs-4"></i>
-        <h5 class="fw-bold mb-0">Jurnal Sholat</h5>
-    </div>
-    <button onclick="logoutMurid()" class="btn btn-outline-light btn-sm px-3 rounded-pill">
-        <i class="fa-solid fa-right-from-bracket me-1"></i> Keluar
-    </button>
-</div>
 
-<script>
-    // URL WEB APP USER (Sama dengan URL Deployment di index.html bapak)
-    const API_URL = "https://script.google.com/macros/s/AKfycbxb03McgYYM0ugUkAGETJQeksycBmX0QzCfHhnqFgHLwKNcUjyvM3r2D_KH7Aj4JEzR/exec";
 
-    // Jam Batas Toleransi Pelaporan Sholat Fardhu
-    const masterJadwal = {
-        "S": { nama: "Subuh", buka: "04:30", tutup: "06:00" },
-        "Z": { nama: "Zuhur", buka: "12:00", tutup: "15:00" },
-        "A": { nama: "Ashar", buka: "15:15", tutup: "18:00" },
-        "M": { nama: "Maghrib", buka: "18:15", tutup: "19:15" },
-        "I": { nama: "Isya", buka: "19:30", tutup: "23:59" }
-    };
+    <div class="hero-section text-center">
 
-    // ==========================================
-    // SINKRONISASI TOTAL DENGAN FORMAT INDEX.HTML
-    // ==========================================
-    let currentNama = "ALIF FIRMANSYAH";
-    let currentNIM = "2001";
-    let currentJK = "L";
-    let currentKelas = "";
+        <div class="container">
 
-    // Ambil object 'siswa_login' dari localStorage sesuai buatan di file index bapak
-    const sesiLokal = localStorage.getItem("siswa_login");
-    if (sesiLokal) {
-        try {
-            const dataSiswa = JSON.parse(sesiLokal);
-            currentNama = dataSiswa.nama || currentNama;
-            currentNIM = dataSiswa.nim || currentNIM;
-            currentJK = dataSiswa.gender || currentJK; // di index bapak disave sebagai 'gender'
-            currentKelas = dataSiswa.kelas || currentKelas;
-        } catch(e) {
-            console.log("Gagal membaca objek login.");
-        }
-    } else {
-        // Jika murid nakal langsung tembak url sholat.html tanpa login, tendang balik ke index.html
-        window.location.href = "index.html";
-    }
-</script>
+            <div class="logo-placeholder">
 
-<div class="container max-width-md px-3">
-    <div class="header-profile mb-4 text-center mt-3">
-        <span class="badge bg-warning text-dark badge-gender" id="lblGender">MURID</span>
-        <i class="fa-solid fa-user-graduate fa-3x mb-2"></i>
-        <h4 class="fw-bold mb-1" id="lblNama">Loading...</h4>
-        <p class="mb-2 opacity-75" id="lblNIM">NIM: -</p>
-        <span class="badge bg-light text-dark px-3 py-2 rounded-pill fw-bold" id="lblHariIni">Hari Ini</span>
-    </div>
+                <i class="fa-solid fa-mosque text-warning"></i>
 
-    <div id="areaUdzur" class="d-none mb-4">
-        <button onclick="klaimUdzurSyari()" class="btn btn-secondary w-100 py-3 rounded-3 fw-bold shadow-sm">
-            <i class="fa-solid fa-moon me-2"></i> Klik Disini Jika Sedang Halangan / Udzur Syar'i
-        </button>
-    </div>
+            </div>
 
-    <div class="row" id="containerSholat"></div>
-</div>
+            <h1 class="fw-bold mb-1">SMP YASPI MEDAN</h1>
 
-<div class="modal fade" id="loadingModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content border-0 bg-transparent text-center text-white">
-            <div class="spinner-border text-light mx-auto mb-2" style="width: 3rem; height: 3rem;" role="status"></div>
-            <h6 class="fw-bold">Mengunci laporan ke server...</h6>
+            <p class="text-white-50 fs-5 mb-3">Arah Baru: Unggul dalam Tahfiz, Terdepan dalam Teknologi</p>
+
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+
+                <i class="fa-solid fa-circle-check me-1"></i> PORTAL DIGITAL TERPADU (UNI-SISTEM 2026)
+
+            </span>
+
         </div>
+
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Tempel Data Identitas Murid ke Elemen HTML
-        document.getElementById("lblNama").innerText = currentNama;
-        document.getElementById("lblNIM").innerText = "NIM: " + currentNIM + " (" + currentKelas + ")";
-        
-        // Deteksi Jenis Kelamin Murid untuk label profil & fitur tombol
-        let jkCheck = currentJK.toString().toUpperCase();
-        if (jkCheck === "P" || jkCheck === "PEREMPUAN" || jkCheck.includes("WANITA") || jkCheck === "PEREMPUAN (SISWI)") {
-            document.getElementById("lblGender").innerText = "SISWI (PEREMPUAN)";
-            document.getElementById("areaUdzur").classList.remove("d-none");
-        } else {
-            document.getElementById("lblGender").innerText = "SISWA (LAKI-LAKI)";
-        }
 
-        // Tampilkan Tanggal Hari Ini Berbahasa Indonesia
-        const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById("lblHariIni").innerText = new Date().toLocaleDateString('id-ID', opsi);
 
-        renderCardSholat();
-    });
+    <div class="container my-5">
 
-    // FUNGSI UTAMA LOGOUT UNTUK MEMBERSIHKAN INTEGRASI SAKRAL INDEX.HTML
-    function logoutMurid() {
-        if (confirm("Apakah kamu yakin ingin keluar dari aplikasi Jurnal Sholat ini?")) {
-            // Hapus session kunci utama sesuai instruksi index bapak
-            localStorage.removeItem("siswa_login");
-            
-            // Alihkan kembali ke halaman utama portal login bapak
-            window.location.href = "index.html"; 
-        }
-    }
+        <div class="text-center mb-5">
 
-    function renderCardSholat() {
-        const container = document.getElementById("containerSholat");
-        container.innerHTML = "";
-        
-        const d = new Date();
-        const tglHariIni = d.getDate();
+            <h2 class="fw-bold text-dark">Layanan & Aktivitas Digital</h2>
 
-        Object.keys(masterJadwal).forEach(k => {
-            const j = masterJadwal[k];
-            const kuncian = localStorage.getItem(`kunci_${k}_${tglHariIni}`);
-            
-            let htmlCard = `
-                <div class="col-12">
-                    <div class="card card-sholat p-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-clock text-success me-2"></i>Sholat ${j.nama}</h5>
-                            <span class="badge bg-dark opacity-50">${j.buka} - ${j.tutup}</span>
+            <p class="text-muted">Silakan pilih ekosistem digital yang ingin Anda akses</p>
+
+        </div>
+
+
+
+        <div class="row g-4">
+
+            <!-- JURNAL SHOLAT MURID -->
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card menu-card p-4 d-flex flex-column justify-content-between">
+
+                    <div>
+
+                        <div class="icon-box bg-success text-success bg-opacity-10">
+
+                            <i class="fa-solid fa-star-and-crescent text-success"></i>
+
                         </div>
-                        <div class="area-tombol mt-2 d-flex flex-wrap gap-2" id="box-${k}">
-            `;
 
-            if (kuncian) {
-                const info = JSON.parse(kuncian);
-                htmlCard += `
-                    <div class="w-100 alert alert-success py-2 px-3 mb-0 rounded-3 d-flex justify-content-between align-items-center">
-                        <span><i class="fa-solid fa-circle-check me-2"></i>Terlaporkan: <b>${info.status}</b></span>
-                        <span class="badge bg-secondary">${info.jam} WIB</span>
-                    </div>`;
+                        <h5 class="fw-bold mb-2">Catatan Sholat Murid</h5>
+
+                        <p class="text-muted small">Aplikasi pemantauan ibadah sholat harian mandiri untuk seluruh murid SMP Yaspi.</p>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+
+                        <span class="badge badge-ready px-2.5 py-1.5 rounded">Aktif</span>
+
+                        <button id="btnBukaJurnal" class="btn btn-sm btn-akses px-3" onclick="cekAksesSesiPortal()">Buka <i class="fa-solid fa-arrow-right ms-1"></i></button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- JURNAL TAHFIZ -->
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card menu-card p-4 d-flex flex-column justify-content-between">
+
+                    <div>
+
+                        <div class="icon-box bg-warning text-warning bg-opacity-10">
+
+                            <i class="fa-solid fa-book-quran"></i>
+
+                        </div>
+
+                        <h5 class="fw-bold mb-2">Jurnal Tahfiz</h5>
+
+                        <p class="text-muted small">Sistem pencatatan hafalan ayat dan setoran hafalan Al-Qur'an secara real-time.</p>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+
+                        <span class="badge badge-dev px-2.5 py-1.5 rounded">Rencana</span>
+
+                        <button class="btn btn-sm btn-secondary disabled opacity-50 px-3">Kunci</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LAB ARDUINO -->
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card menu-card p-4 d-flex flex-column justify-content-between">
+
+                    <div>
+
+                        <div class="icon-box bg-info text-info bg-opacity-10">
+
+                            <i class="fa-solid fa-microchip"></i>
+
+                        </div>
+
+                        <h5 class="fw-bold mb-2">Laboratorium Arduino</h5>
+
+                        <p class="text-muted small">Wadah murid untuk mengunggah laporan penelitian sederhana berbasis teknologi robotika DIY.</p>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+
+                        <span class="badge badge-dev px-2.5 py-1.5 rounded">Rencana</span>
+
+                        <button class="btn btn-sm btn-secondary disabled opacity-50 px-3">Kunci</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SPP & ABSENSI -->
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card menu-card p-4 d-flex flex-column justify-content-between">
+
+                    <div>
+
+                        <div class="icon-box bg-danger text-danger bg-opacity-10">
+
+                            <i class="fa-solid fa-wallet"></i>
+
+                        </div>
+
+                        <h5 class="fw-bold mb-2">Sistem SPP & Absensi</h5>
+
+                        <p class="text-muted small">Portal administrasi guru untuk absensi harian dan pembayaran SPP digital yang sudah berjalan.</p>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+
+                        <span class="badge badge-ready px-2.5 py-1.5 rounded">Integrasi</span>
+
+                        <a href="#" class="btn btn-sm btn-akses px-3">Akses <i class="fa-solid fa-arrow-right ms-1"></i></a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="row mt-5">
+
+            <div class="col-12">
+
+                <div class="p-4 bg-white rounded-3 shadow-sm border-start border-4 border-success text-center text-md-start">
+
+                    <h5 class="fw-bold"><i class="fa-solid fa-lightbulb text-warning me-2"></i> Pesan Kepemimpinan:</h5>
+
+                    <p class="mb-0 text-muted italic">"Masuk siang bukan halangan untuk menjadi pemenang. Lewat integrasi iman, takwa, dan teknologi, kita buktikan SMP Yaspi Medan mampu mencetak generasi unggul yang melek masa depan!" — <strong>Pak Ifham Fuady Fasa, S.Pd (VM)</strong></p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- MODAL POPUP LOGIN OTOMATIS BER-PASSWORD -->
+
+    <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+
+            <div class="modal-content">
+
+                <div class="modal-header bg-success text-white py-2">
+
+                    <h6 class="modal-title fw-bold" id="loginModalLabel"><i class="fa-solid fa-user-shield me-2"></i>Identitas Murid</h6>
+
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div id="loadingSesi" class="text-center py-3" style="display: none;">
+
+                        <div class="spinner-border text-success spinner-border-sm mb-2" role="status"></div>
+
+                        <p class="small text-muted mb-0">Mengambil data spreadsheet...</p>
+
+                    </div>
+
+                    
+
+                    <form id="formPortal" onsubmit="prosesValidasiDanMasuk(event)">
+
+                        <div class="mb-2">
+
+                            <label class="form-label small fw-bold mb-1">Pilih Kelas</label>
+
+                            <select id="pilihKelas" class="form-select form-select-sm" onchange="muatDaftarNamaSesuaiKelas()" required>
+
+                                <option value="" disabled selected>-- Pilih Kelas --</option>
+
+                                <option value="7-1">Kelas 7-1</option>
+
+                                <option value="7-2">Kelas 7-2</option>
+
+                                <option value="8-1">Kelas 8-1</option>
+
+                                <option value="8-2">Kelas 8-2</option>
+
+                                <option value="9-1">Kelas 9-1</option>
+
+                                <option value="9-2">Kelas 9-2</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-2">
+
+                            <label class="form-label small fw-bold mb-1">Nama Murid</label>
+
+                            <select id="pilihNama" class="form-select form-select-sm" onchange="deteksiOtomatisIdentitas()" disabled required>
+
+                                <option value="" disabled selected>-- Pilih Nama Anda --</option>
+
+                            </select>
+
+                        </div>
+
+                        
+
+                        <!-- Info Otomatis Tersembunyi (Dideteksi Otomatis) -->
+
+                        <div class="p-2 bg-light rounded border my-2 small" id="boxPreviewInfo" style="display: none;">
+
+                            <div><i class="fa-solid fa-id-card text-muted me-1"></i> NIM: <strong id="valNIM">-</strong></div>
+
+                            <div><i class="fa-solid fa-venus-mars text-muted me-1"></i> Gender: <strong id="valGender">-</strong></div>
+
+                        </div>
+
+
+
+                        <!-- Kolom Sandi Dinamis -->
+
+                        <div class="mb-3" id="boxPassword" style="display: none;">
+
+                            <label class="form-label small fw-bold mb-1" id="lblLabelSandi">Kata Sandi Akun</label>
+
+                            <input type="password" id="inPassword" class="form-control form-control-sm" placeholder="Masukkan kata sandi" required>
+
+                            <div class="form-text text-danger" style="font-size: 10px;" id="infoSandiLama"></div>
+
+                        </div>
+
+
+
+                        <button type="submit" id="btnSubmitPortal" class="btn btn-sm btn-success w-100 fw-bold py-2 rounded-3 mt-2" disabled>Masuk Jurnal <i class="fa-solid fa-right-to-bracket ms-1"></i></button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <footer class="text-center pb-4">
+
+        <div class="container">
+
+            <p class="mb-0">&copy; 2026 SMP Yaspi Medan. Didesain secara digital bersama Tim VM.</p>
+
+        </div>
+
+    </footer>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+    <script>
+
+        // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA YANG BARU
+
+        const API_URL = "https://script.google.com/macros/s/AKfycbxb03McgYYM0ugUkAGETJQeksycBmX0QzCfHhnqFgHLwKNcUjyvM3r2D_KH7Aj4JEzR/exec";
+
+        let cacheDaftarMurid = [];
+
+        let muridTerpilih = null;
+
+
+
+        function cekAksesSesiPortal() {
+
+            const sesiLokal = localStorage.getItem("siswa_login");
+
+            if (sesiLokal) {
+
+                window.location.href = "sholat.html";
+
             } else {
-                let jkCheck = currentJK.toString().toUpperCase();
-                if (jkCheck === "L" || jkCheck === "LAKI-LAKI" || jkCheck.includes("LAKI")) {
-                    htmlCard += `
-                        <button onclick="prosesKlaim('${k}', 'BERJAMAAH', 'primary')" class="btn btn-primary btn-status flex-grow-1"><i class="fa-solid fa-users me-1"></i>Berjamaah (20)</button>
-                        <button onclick="prosesKlaim('${k}', 'AWAL WAKTU', 'success')" class="btn btn-success btn-status flex-grow-1">Awal (15)</button>
-                    `;
-                } else {
-                    htmlCard += `
-                        <button onclick="prosesKlaim('${k}', 'AWAL WAKTU', 'success')" class="btn btn-success btn-status flex-grow-1"><i class="fa-solid fa-star me-1"></i>Awal Waktu (20)</button>
-                    `;
-                }
-                
-                htmlCard += `
-                    <button onclick="prosesKlaim('${k}', 'PERTENGAHAN', 'warning')" class="btn btn-warning btn-status flex-grow-1 text-dark">Tengah (10)</button>
-                    <button onclick="prosesKlaim('${k}', 'AKHIR WAKTU', 'danger')" class="btn btn-danger btn-status flex-grow-1">Akhir (5)</button>
-                `;
+
+                var modalLogin = new bootstrap.Modal(document.getElementById('loginModal'));
+
+                modalLogin.show();
+
             }
 
-            htmlCard += `</div></div></div>`;
-            container.innerHTML += htmlCard;
-        });
-    }
-
-    function prosesKlaim(kodeSholat, tipeKlaim, payloadWarna) {
-        const sekarang = new Date();
-        const jamSekarangMenit = String(sekarang.getHours()).padStart(2, '0') + ":" + String(sekarang.getMinutes()).padStart(2, '0');
-        const j = masterJadwal[kodeSholat];
-
-        if (jamSekarangMenit < j.buka) {
-            alert(`Belum masuk waktu untuk lapor sholat ${j.nama} nak..`);
-            return;
-        }
-        if (jamSekarangMenit > j.tutup) {
-            alert(`Waktu pelaporan sholat ${j.nama} hari ini sudah habis/ditutup nak..`);
-            return;
         }
 
-        if (!confirm(`Apakah kamu yakin melapor sholat ${tipeKlaim}? Data yang dikunci tidak bisa diubah!`)) return;
 
-        var myModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-        myModal.show();
 
-        fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({ 
-                action: "simpan_sholat", 
-                nim: currentNIM, 
-                sholat: kodeSholat, 
-                jam: jamSekarangMenit,
-                kategori: tipeKlaim 
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            myModal.hide();
-            if(data.success) {
-                kunciLokal(kodeSholat, tipeKlaim, jamSekarangMenit, payloadWarna);
-            } else {
-                alert("Gagal menyimpan ke server: " + data.message);
-            }
-        })
-        .catch(err => {
-            myModal.hide();
-            kunciLokal(kodeSholat, tipeKlaim, jamSekarangMenit, payloadWarna);
-        });
-    }
+        function muatDaftarNamaSesuaiKelas() {
 
-    function klaimUdzurSyari() {
-        if (!confirm("Apakah kamu yakin sedang halangan (Udzur Syar'i)? Seluruh 5 waktu sholat hari ini akan terisi otomatis.")) return;
-        
-        var myModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-        myModal.show();
-        
-        const sekarang = new Date();
-        const jamSekarangMenit = String(sekarang.getHours()).padStart(2, '0') + ":" + String(sekarang.getMinutes()).padStart(2, '0');
-        const listSholat = ["S", "Z", "A", "M", "I"];
-        
-        let promises = listSholat.map(k => {
-            return fetch(API_URL, {
+            const kelas = document.getElementById("pilihKelas").value;
+
+            if(!kelas) return;
+
+
+
+            document.getElementById("loadingSesi").style.display = "block";
+
+            document.getElementById("formPortal").style.opacity = "0.4";
+
+            
+
+            const selectNama = document.getElementById("pilihNama");
+
+            selectNama.disabled = true;
+
+            selectNama.innerHTML = '<option value="" disabled selected>-- Memuat nama... --</option>';
+
+            
+
+            document.getElementById("boxPreviewInfo").style.display = "none";
+
+            document.getElementById("boxPassword").style.display = "none";
+
+            document.getElementById("btnSubmitPortal").disabled = true;
+
+
+
+            fetch(API_URL, {
+
                 method: "POST",
-                body: JSON.stringify({ 
-                    action: "simpan_sholat", 
-                    nim: currentNIM, 
-                    sholat: k, 
-                    jam: jamSekarangMenit, 
-                    kategori: "UDZUR SYAR'I" 
-                })
-            }).then(res => res.json());
-        });
-        
-        Promise.all(promises)
-        .then(results => {
-            myModal.hide();
-            const tglHariIni = sekarang.getDate();
-            listSholat.forEach(k => {
-                localStorage.setItem(`kunci_${k}_${tglHariIni}`, JSON.stringify({ status: "UDZUR SYAR'I", jam: "UDZUR", warna: "secondary" }));
-            });
-            alert("Status Udzur Syar'i sukses disimpan!");
-            renderCardSholat();
-        })
-        .catch(err => {
-            myModal.hide();
-            alert("Koneksi gagal saat mengirim data Udzur.");
-        });
-    }
 
-    function kunciLokal(kodeSholat, tipeKlaim, jamKlik, warna) {
-        const tglHariIni = new Date().getDate();
-        localStorage.setItem(`kunci_${kodeSholat}_${tglHariIni}`, JSON.stringify({ status: tipeKlaim, jam: jamKlik, warna: warna }));
-        renderCardSholat();
-    }
-</script>
+                body: JSON.stringify({ action: "ambil_murid", kelas: kelas })
+
+            })
+
+            .then(res => res.json())
+
+            .then(respon => {
+
+                document.getElementById("loadingSesi").style.display = "none";
+
+                document.getElementById("formPortal").style.opacity = "1";
+
+                
+
+                if (respon.success) {
+
+                    cacheDaftarMurid = respon.data;
+
+                    selectNama.innerHTML = '<option value="" disabled selected>-- Pilih Nama Anda --</option>';
+
+                    cacheDaftarMurid.forEach((m, indeks) => {
+
+                        selectNama.innerHTML += `<option value="${indeks}">${m.nama}</option>`;
+
+                    });
+
+                    selectNama.disabled = false;
+
+                } else {
+
+                    alert(respon.message);
+
+                }
+
+            })
+
+            .catch(err => {
+
+                document.getElementById("loadingSesi").style.display = "none";
+
+                document.getElementById("formPortal").style.opacity = "1";
+
+                alert("Gagal terhubung ke Google Sheets. Silakan coba lagi.");
+
+            });
+
+        }
+
+
+
+        function deteksiOtomatisIdentitas() {
+
+            const indeks = document.getElementById("pilihNama").value;
+
+            if(indeks === "") return;
+
+
+
+            muridTerpilih = cacheDaftarMurid[indeks];
+
+            
+
+            document.getElementById("valNIM").innerText = muridTerpilih.nim;
+
+            document.getElementById("valGender").innerText = muridTerpilih.jk === "L" ? "Laki-Laki" : "Perempuan";
+
+            document.getElementById("boxPreviewInfo").style.display = "block";
+
+
+
+            const lblSandi = document.getElementById("lblLabelSandi");
+
+            const infoSandi = document.getElementById("infoSandiLama");
+
+            const inputSandi = document.getElementById("inPassword");
+
+            
+
+            inputSandi.value = "";
+
+            document.getElementById("boxPassword").style.display = "block";
+
+            document.getElementById("btnSubmitPortal").disabled = false;
+
+
+
+            if (muridTerpilih.hasPassword) {
+
+                lblSandi.innerText = "Masukkan Kata Sandi Anda";
+
+                infoSandi.innerText = "*Akun sudah terdaftar. Masukkan password lama untuk validasi.";
+
+            } else {
+
+                lblSandi.innerText = "Buat Kata Sandi Baru Anda";
+
+                infoSandi.innerText = "*Akun baru! Tentukan password pertama Anda untuk mengunci HP ini.";
+
+            }
+
+        }
+
+
+
+        function prosesValidasiDanMasuk(event) {
+
+            event.preventDefault();
+
+            if(!muridTerpilih) return;
+
+
+
+            const kelas = document.getElementById("pilihKelas").value;
+
+            const password = document.getElementById("inPassword").value;
+
+            const btnSubmit = document.getElementById("btnSubmitPortal");
+
+
+
+            btnSubmit.disabled = true;
+
+            btnSubmit.innerHTML = 'Memverifikasi... <span class="spinner-border spinner-border-sm" role="status"></span>';
+
+
+
+            fetch(API_URL, {
+
+                method: "POST",
+
+                body: JSON.stringify({
+
+                    action: "login_murid",
+
+                    kelas: kelas,
+
+                    nim: muridTerpilih.nim,
+
+                    password: password
+
+                })
+
+            })
+
+            .then(res => res.json())
+
+            .then(respon => {
+
+                if (respon.success) {
+
+                    // Paket data sesi lokal
+
+                    const sesiMurid = {
+
+                        nama: muridTerpilih.nama,
+
+                        nim: muridTerpilih.nim,
+
+                        kelas: kelas,
+
+                        gender: muridTerpilih.jk,
+
+                        password: password
+
+                    };
+
+                    
+
+                    localStorage.setItem("siswa_login", JSON.stringify(sesiMurid));
+
+                    window.location.href = "sholat.html";
+
+                } else {
+
+                    alert(respon.message);
+
+                    btnSubmit.disabled = false;
+
+                    btnSubmit.innerHTML = 'Masuk Jurnal <i class="fa-solid fa-right-to-bracket ms-1"></i>';
+
+                }
+
+            })
+
+            .catch(err => {
+
+                alert("Koneksi gagal saat otentikasi sandi.");
+
+                btnSubmit.disabled = false;
+
+                btnSubmit.innerHTML = 'Masuk Jurnal <i class="fa-solid fa-right-to-bracket ms-1"></i>';
+
+            });
+
+        }
+
+    </script>
+
 </body>
+
 </html>
