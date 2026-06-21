@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitoring Sholat Murid</title>
+    <!-- Bootstrap 5 (Link Sudah Diperbaiki & Benar) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -57,7 +60,6 @@
             padding: 5px 12px;
             border-radius: 15px;
         }
-        /* Custom SweetAlert-like styling via Bootstrap for modern looking alerts */
         .modal-content {
             border-radius: 15px;
             border: none;
@@ -66,6 +68,7 @@
 </head>
 <body>
 
+    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="#"><i class="fa-solid fa-mosque me-2 text-warning"></i>Jurnal Sholat</a>
@@ -74,11 +77,12 @@
     </nav>
 
     <div class="container my-4">
+        <!-- REAL-TIME CLOCK AND PROFILE CARD -->
         <div class="row g-3 mb-4">
             <div class="col-md-4 text-center d-flex flex-column justify-content-center bg-white p-3 rounded-3 shadow-sm">
                 <div class="text-muted small fw-bold text-uppercase">Waktu Saat Ini (WIB)</div>
-                <div id="txtJam" class="jam-realtime">00:00:00</div>
-                <div id="txtTanggal" class="text-secondary fw-semibold">Kamis, 1 Januari 2026</div>
+                <div id="txtJam" class="jam-realtime">--:--:--</div>
+                <div id="txtTanggal" class="text-secondary fw-semibold">Memuat tanggal...</div>
             </div>
             <div class="col-md-8">
                 <div class="card card-profile p-4 h-100 d-flex flex-column justify-content-between">
@@ -91,7 +95,7 @@
                         <p class="mb-0 text-white-50"><i class="fa-solid fa-graduation-cap me-2"></i>Kelas: <span id="lblKelas" class="text-white fw-bold">-</span></p>
                     </div>
                     <div class="mt-3 pt-2 border-top border-secondary text-end" id="areaUdzur" style="display: none;">
-                        <button class="btn btn-sm btn-danger fw-bold shadow-sm px-3 rounded-pill" onclick="klaimUdzurSyar'i()">
+                        <button class="btn btn-sm btn-danger fw-bold shadow-sm px-3 rounded-pill" onclick="klaimUdzurSyari()">
                             <i class="fa-solid fa-person-dress-burst me-1"></i> Klaim Udzur Syar'i (Khusus Perempuan)
                         </button>
                     </div>
@@ -99,8 +103,10 @@
             </div>
         </div>
 
+        <!-- DAFTAR KARTU JADWAL SHOLAT -->
         <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-list-check me-2"></i>Laporan Sholat Fardhu Hari Ini</h5>
         <div class="row g-3" id="containerSholat">
+            <!-- Subuh -->
             <div class="col-md-12">
                 <div class="card sholat-card p-3">
                     <div class="row align-items-center g-3">
@@ -116,11 +122,11 @@
                             <div class="fw-bold text-muted small mb-1">STATUS</div>
                             <span id="status-S" class="badge bg-secondary status-badge">Belum Diisi</span>
                         </div>
-                        <div class="col-12 col-sm-3 text-end" id="btn-container-S">
-                            </div>
+                        <div class="col-12 col-sm-3 text-end" id="btn-container-S"></div>
                     </div>
                 </div>
             </div>
+            <!-- Zuhur -->
             <div class="col-md-12">
                 <div class="card sholat-card p-3">
                     <div class="row align-items-center g-3">
@@ -140,6 +146,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Ashar -->
             <div class="col-md-12">
                 <div class="card sholat-card p-3">
                     <div class="row align-items-center g-3">
@@ -159,6 +166,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Maghrib -->
             <div class="col-md-12">
                 <div class="card sholat-card p-3">
                     <div class="row align-items-center g-3">
@@ -178,6 +186,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Isya -->
             <div class="col-md-12">
                 <div class="card sholat-card p-3">
                     <div class="row align-items-center g-3">
@@ -200,6 +209,7 @@
         </div>
     </div>
 
+    <!-- MODAL LOADING SPINNER -->
     <div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content p-4 text-center">
@@ -210,21 +220,21 @@
         </div>
     </div>
 
+    <!-- JS BOOTSTRAP -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // ===================================================================
-        // LINK APP SCRIPT ASLI MILIK BAPAK (SINKRON 100%)
-        // ===================================================================
         const API_URL = "https://script.google.com/macros/s/AKfycbxb03McgYYM0ugUkAGETJQeksycBmX0QzCfHhnqFgHLwKNcUjyvM3r2D_KH7Aj4JEzR/exec";
 
-        // Variabel Data Siswa Berjalan
         let currentNIM = "";
         let currentGender = "";
         let databaseJadwal = { "S": "05:01", "Z": "12:28", "A": "15:55", "M": "18:37", "I": "19:52" };
 
-        // Proteksi Halaman (Cek Session Login LocalStorage)
-        window.onload = function() {
+        // Dijalankan langsung saat web dibuka
+        window.addEventListener('DOMContentLoaded', () => {
+            perbaruiJamDanTanggal(); // Jalankan instan sekali di awal
+            setInterval(perbaruiJamDanTanggal, 1000); // Lanjutkan per detik
+
             const sessionSiswa = localStorage.getItem("siswa_login");
             if (!sessionSiswa) {
                 window.location.href = "index.html"; 
@@ -240,28 +250,22 @@
             document.getElementById("lblKelas").innerText = dataSiswa.kelas;
             document.getElementById("badgeGender").innerText = currentGender === "P" ? "SISWI (PEREMPUAN)" : "SISWA (LAKI-LAKI)";
 
-            // Munculkan menu udzur syar'i otomatis murni hanya jika terdeteksi perempuan (P)
             if (currentGender === "P") {
                 document.getElementById("areaUdzur").style.display = "block";
             }
 
-            jalankanJamRealtime();
             muatStatusTombolHarian();
-        };
+        });
 
-        // Fungsi Jam Fisik Berjalan
-        function jalankanJamRealtime() {
-            setInterval(() => {
-                const sekarang = new Date();
-                const opsiJam = { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false };
-                document.getElementById("txtJam").innerText = sekarang.toLocaleTimeString("id-ID", opsiJam);
-                
-                const opsiTgl = { timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "long", year: "numeric" };
-                document.getElementById("txtTanggal").innerText = sekarang.toLocaleDateString("id-ID", opsiTgl);
-            }, 1000);
+        function perbaruiJamDanTanggal() {
+            const sekarang = new Date();
+            const opsiJam = { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false };
+            const opsiTgl = { timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "long", year: "numeric" };
+            
+            document.getElementById("txtJam").innerText = sekarang.toLocaleTimeString("id-ID", opsiJam);
+            document.getElementById("txtTanggal").innerText = sekarang.toLocaleDateString("id-ID", opsiTgl);
         }
 
-        // Generate Tombol Secara Dinamis Berdasarkan Kondisi Fiqih & Gender Siswa
         function muatStatusTombolHarian() {
             const listKode = ["S", "Z", "A", "M", "I"];
             
@@ -271,18 +275,15 @@
                 const statusBadge = document.getElementById("status-" + kode);
 
                 if (localStatus) {
-                    // Jika data lokal sdh terkunci permanen hari ini
                     const parsed = JSON.parse(localStatus);
                     statusBadge.innerText = parsed.teks;
                     statusBadge.className = `badge status-badge ${parsed.warnaBadge}`;
                     containerBtn.innerHTML = `<span class="text-muted small fw-bold"><i class="fa-solid fa-lock me-1"></i> Terkunci (${parsed.jam})</span>`;
                 } else {
-                    // Jika sel sholat masih kosong belum diisi
                     statusBadge.innerText = "Belum Diisi";
                     statusBadge.className = "badge bg-secondary status-badge";
 
                     if (currentGender === "L") {
-                        // Tombol Untuk Murid Laki-Laki
                         containerBtn.innerHTML = `
                             <button class="btn btn-sm btn-primary btn-action mb-1" onclick="prosesKlaim('${kode}', 'BERJAMAAH', 'blue')"><i class="fa-solid fa-users"></i> Jamaah</button>
                             <button class="btn btn-sm btn-success btn-action mb-1" onclick="prosesKlaim('${kode}', 'AWAL WAKTU', 'awal')"><i class="fa-solid fa-clock"></i> Awal</button>
@@ -290,7 +291,6 @@
                             <button class="btn btn-sm btn-danger btn-action mb-1" onclick="prosesKlaim('${kode}', 'AKHIR WAKTU', 'red')">Akhir</button>
                         `;
                     } else {
-                        // Tombol Untuk Murid Perempuan (Tanpa Tombol Jamaah Masjid)
                         containerBtn.innerHTML = `
                             <button class="btn btn-sm btn-success btn-action mb-1" onclick="prosesKlaim('${kode}', 'AWAL WAKTU', 'awal')"><i class="fa-solid fa-clock"></i> Awal Waktu</button>
                             <button class="btn btn-sm btn-warning btn-action mb-1 text-dark" onclick="prosesKlaim('${kode}', 'PERTENGAHAN', 'yellow')">Pertengahan</button>
@@ -301,13 +301,11 @@
             });
         }
 
-        // Eksekusi Pengiriman Absensi Sholat Jujur Ke Server Apps Script Bapak
         function prosesKlaim(kodeSholat, tipeKlaim, payloadWarna) {
             const sekarang = new Date();
             const opsiJam = { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", hour12: false };
             const jamKlikMenit = sekarang.toLocaleTimeString("id-ID", opsiJam);
 
-            // Blokir Validasi Validitas Waktu Real-time Sebelum Menekan Tombol
             if (!validasiWaktuSholatMulai(kodeSholat, jamKlikMenit)) {
                 alert(`Maaf, belum memasuki batas awal waktu sholat terkait!`);
                 return;
@@ -338,7 +336,6 @@
                 if (data.status === "sukses") {
                     alert(data.pesan);
                     
-                    // Kunci Ke Dalam Penyimpanan HP Agar Hemat Kuota & Kebal Reset Re-login
                     let kelasBadge = "bg-success";
                     if(payloadWarna === "blue") kelasBadge = "bg-primary";
                     if(payloadWarna === "yellow") kelasBadge = "bg-warning text-dark";
@@ -359,8 +356,7 @@
             });
         }
 
-        // Fungsi Khusus Klaim Udzur Syar'i Sekaligus 5 Waktu untuk Siswi
-        function klaimUdzurSyar'i() {
+        function klaimUdzurSyari() {
             if (!confirm("Apakah kamu benar sedang berhalangan/haid hari ini? Seluruh 5 waktu sholat akan otomatis terisi nilai penuh Udzur Syar'i (20 Poin) sesuai syariat.")) {
                 return;
             }
@@ -368,7 +364,6 @@
             var loader = new bootstrap.Modal(document.getElementById('loadingModal'));
             loader.show();
 
-            // Eksekusi beruntun memproses kelima waktu ke Google Sheets
             const listKode = ["S", "Z", "A", "M", "I"];
             let suksesCount = 0;
 
@@ -378,7 +373,7 @@
                         action: "simpan_sholat",
                         nim: currentNIM,
                         sholat: kode,
-                        jam: databaseJadwal[kode], // Menggunakan jam jadwal asli agar lolos filter validasi waktu server bapak
+                        jam: databaseJadwal[kode], 
                         warna: "abu"
                     };
 
@@ -402,11 +397,10 @@
                     .catch(err => {
                         if(index === 4) loader.hide();
                     });
-                }, index * 400); // jeda 400ms per hit server agar aman anti-crash request
+                }, index * 400); 
             });
         }
 
-        // Helper validasi pembatasan waktu
         function validasiWaktuSholatMulai(kode, jamKlik) {
             function keMenit(tStr) {
                 var b = tStr.split(":");
@@ -415,6 +409,10 @@
             const menitSekarang = keMenit(jamKlik);
             const batasMulai = keMenit(databaseJadwal[kode]);
             return menitSekarang >= batasMulai;
+        }
+
+        document.getTanggalHariIni = function() {
+            return getTanggalHariIni();
         }
 
         function getTanggalHariIni() {
